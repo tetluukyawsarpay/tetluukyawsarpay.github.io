@@ -2,16 +2,24 @@
 layout: default
 ---
 
-<article class="post">
-  <h1>{{ page.title }}</h1>
-
-  <div class="entry">
-    {{ content }}
+<!-- Post Header Banner (ပို့စ်ခေါင်းစဉ် နဖူးစီးအရောင်စုံ) -->
+<div style="background: #a8321d; padding: 30px 20px; border-radius: 12px; text-align: center; color: white; margin-bottom: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+  <h1 style="margin: 0 0 15px 0; font-size: 24px; font-weight: bold;">{{ page.title }}</h1>
+  <div style="font-size: 14px; opacity: 0.9;">
+    <span>📅 {{ page.date | date: "%Y-%m-%d" }}</span> &nbsp;•&nbsp; 
+    <span>✍️ တက်လူကျော်စာပေ</span>
   </div>
-
-  <div class="date">
-    Written on {{ page.date | date: "%B %e, %Y" }}
+  <div style="margin-top: 12px; font-size: 13px; background: rgba(0,0,0,0.25); display: inline-block; padding: 4px 12px; border-radius: 20px;">
+    📖 စာအုပ်အညွှန်း
   </div>
+</div>
 
-  {% include disqus.html %}
-</article>
+<!-- Post Content Container (စာသားနှင့် ပုံများပြသရန် နောက်ခံကွက်) -->
+<div class="post-content" style="background: #161b22; color: #c9d2d9; padding: 25px; border-radius: 12px; border: 1px solid #30363d; line-height: 1.8;">
+  {{ content }}
+</div>
+
+<!-- Bottom Back Button (ပင်မစာမျက်နှာသို့ ပြန်ရန် ခလုတ်) -->
+<div style="margin-top: 25px; text-align: center;">
+  <a href="{{ site.baseurl }}/" style="background: #21262d; color: #58a6ff; padding: 10px 20px; border-radius: 8px; text-decoration: none; border: 1px solid #30363d; display: inline-block; font-size: 14px;">← ပင်မစာမျက်နှာသို့ ပြန်ရန်</a>
+</div>
