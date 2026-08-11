@@ -10,6 +10,8 @@ permalink: /about/
 
 အမှတ် (၁၆-အေ) မြေညီထပ် ၊ လှည်တန်း (၂)လမ်း၊ (၃) ရပ်ကွက်၊ ကမာရွတ် မြို့နယ်၊ ရန်ကုန်။
 
+ဖုန်း 09259289159
+
 ### Contact me
 
 [tetluukyaw@gmail.com](mailto: tetluukyaw@gmail.com)
