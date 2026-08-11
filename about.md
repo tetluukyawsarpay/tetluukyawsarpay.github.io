@@ -4,12 +4,12 @@ title: About
 permalink: /about/
 ---
 
-Some information about you!
+သမိုင်း၊ နိုင်ငံရေး၊ရည်ညွှန်းစာပေ နှင့် သုတစာပေမျိုးစုံ ရနိုင်ပါသည်။
 
-### More Information
+### ဆိုင်လိပ်စာ နှင့် ဖုန်း
 
-A place to include any other types of information that you'd like to include about yourself.
+အမှတ် (၁၆-အေ) မြေညီထပ် ၊ လှည်တန်း (၂)လမ်း၊ (၃) ရပ်ကွက်၊ ကမာရွတ် မြို့နယ်၊ ရန်ကုန်။
 
 ### Contact me
 
-[email@domain.com](mailto:email@domain.com)
+[tetluukyaw@gmail.com](mailto: tetluukyaw@gmail.com)
