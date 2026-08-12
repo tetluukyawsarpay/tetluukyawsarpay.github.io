@@ -2,109 +2,90 @@
 layout: default
 ---
 
-<!-- Header Hero Card -->
-<div style="background: linear-gradient(135deg, #0099ff, #0056b3); padding: 25px; border-radius: 12px; text-align: center; color: white; margin-bottom: 20px; border: 2px solid #ffc107; box-shadow: 0 4px 12px rgba(0,153,255,0.3);">
-  <h2 style="margin: 0 0 10px 0; font-size: 24px;">တက်လူကျော်စာပေ</h2>
-  <p style="color: #e0f2fe; margin: 0 0 15px 0;">သမိုင်း၊ နိုင်ငံရေးနှင့် သုတစာပေ စာအုပ်အညွှန်းများနှင့် အရောင်းပြခန်း</p>
-  
+<!-- 1. Top Navigation Bar (Tabs) -->
+<nav style="background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 12px 20px; margin-bottom: 25px; display: flex; gap: 15px; overflow-x: auto; whitespace: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+  <a href="/" style="color: #58a6ff; font-weight: bold; text-decoration: none; font-size: 14px; padding: 6px 12px; background: #21262d; border-radius: 6px;">🏠 ပင်မစာမျက်နှာ</a>
+  <a href="#" onclick="filterCategory('သမိုင်း')" style="color: #c9d2d9; text-decoration: none; font-size: 14px; padding: 6px 12px; border-radius: 6px;">📜 သမိုင်းစာအုပ်များ</a>
+  <a href="#" onclick="filterCategory('နိုင်ငံရေး')" style="color: #c9d2d9; text-decoration: none; font-size: 14px; padding: 6px 12px; border-radius: 6px;">🏛️ နိုင်ငံရေး</a>
+  <a href="#" onclick="filterCategory('အတ္ထုပ္ပတ္ထိ')" style="color: #c9d2d9; text-decoration: none; font-size: 14px; padding: 6px 12px; border-radius: 6px;">👤 အတ္ထုပ္ပတ္ထိ</a>
+  <a href="#" onclick="filterCategory('all')" style="color: #38bdf8; text-decoration: none; font-size: 14px; padding: 6px 12px; border-radius: 6px;">📚 စာအုပ်အားလုံး</a>
+</nav>
+
+<!-- 2. Header Banner -->
+<div style="background: linear-gradient(135deg, #1e3a8a, #0284c7); padding: 30px 20px; border-radius: 12px; text-align: center; color: white; margin-bottom: 25px; border: 1px solid #38bdf8; box-shadow: 0 4px 15px rgba(0,153,255,0.2);">
+  <h1 style="margin: 0 0 10px 0; font-size: 26px; font-weight: bold;">တက်လူကျော်စာပေ</h1>
+  <p style="color: #e0f2fe; margin: 0 0 15px 0; font-size: 15px;">သမိုင်း၊ နိုင်ငံရေးနှင့် သုတစာပေ စာအုပ်အညွှန်းများနှင့် အရောင်းပြခန်း</p>
   <div>
-    <a href="https://www.facebook.com/tetlukyaw" target="_blank" style="background: #1877f2; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 14px; display: inline-block; margin: 3px;">Facebook</a>
-    <a href="https://t.me/tetluukyawsarpay" target="_blank" style="background: #0088cc; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 14px; display: inline-block; margin: 3px;">Telegram</a>
+    <a href="https://www.facebook.com/tetlukyaw" target="_blank" style="background: #1877f2; color: white; padding: 8px 18px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; margin: 3px; display: inline-block;">Facebook</a>
+    <a href="https://t.me/tetluukyawsarpay" target="_blank" style="background: #0088cc; color: white; padding: 8px 18px; border-radius: 6px; text-decoration: none; font-size: 14px; font-weight: bold; margin: 3px; display: inline-block;">Telegram</a>
   </div>
 </div>
 
-<!-- Search Bar -->
-<div style="margin-bottom: 25px;">
-  <input type="text" id="search-input" onkeyup="searchPosts()" placeholder="🔍 စာအုပ်အညွှန်း ရှာဖွေရန် (ဥပမာ - သမိုင်း၊ နိုင်ငံရေး၊ နန်းနန်း)..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: white; font-size: 15px; box-sizing: border-box;">
+<!-- 3. Search Bar -->
+<div style="margin-bottom: 30px;">
+  <input type="text" id="search-input" onkeyup="searchPosts()" placeholder="🔍 စာအုပ်နာမည်၊ စာရေးသူ သို့မဟုတ် အမျိုးအစား ရှာဖွေရန်..." style="width: 100%; padding: 14px; border-radius: 10px; border: 1px solid #30363d; background: #0d1117; color: white; font-size: 15px; box-sizing: border-box; box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);">
 </div>
 
-<!-- Posts List -->
-<div class="posts">
-  
-  <!-- ၁။ Pinned Posts -->
+<!-- 4. Section Title -->
+<h3 style="color: #58a6ff; border-bottom: 2px solid #30363d; padding-bottom: 10px; margin-bottom: 20px; font-size: 18px;">📖 စာအုပ်အညွှန်းများနှင့် စာအုပ်များ</h3>
+
+<!-- 5. Book Grid Container (စာအုပ်များကို ဘေးတိုက်ပြပေးမည့် CSS Grid) -->
+<div class="book-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 20px;">
   {% for post in site.posts %}
-    {% if post.pin == true %}
-      <article class="post" style="margin-bottom: 35px; background: #161b22; padding: 20px; border-radius: 12px; border: 2px solid #ffc107;">
-        <span style="background: #ffc107; color: #000; padding: 3px 10px; border-radius: 4px; font-size: 12px; font-weight: bold; display: inline-block; margin-bottom: 10px;">📌 အထူးတင်ဆက်မှု (Pinned)</span>
-        
-        <h2 style="margin-top: 5px;">
+    <article class="post-card" style="background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 15px; display: flex; flex-direction: column; justify-content: space-between; transition: transform 0.2s; box-shadow: 0 4px 8px rgba(0,0,0,0.3);">
+      <div>
+        <h3 style="margin-top: 0; font-size: 16px; line-height: 1.4;">
           <a href="{{ post.url }}" style="color: #58a6ff; text-decoration: none;">{{ post.title }}</a>
-        </h2>
+        </h3>
 
-        <!-- Search မှတ်မိစေရန် Category နှင့် Tags များ ပင်မစာမျက်နှာတွင် ထုတ်ပြခြင်း -->
-        <div style="margin: 10px 0; font-size: 13px; color: #8b949e;">
-          <span>📁 Category: 
-            {% for category in post.categories %}
-              <span style="background: #21262d; color: #38bdf8; padding: 2px 6px; border-radius: 4px; margin-right: 4px;">{{ category }}</span>
-            {% endfor %}
-          </span>
-          &nbsp;•&nbsp;
-          <span>🏷️ Tags: 
-            {% for tag in post.tags %}
-              <span style="background: #21262d; color: #fbbf24; padding: 2px 6px; border-radius: 4px; margin-right: 4px;">{{ tag }}</span>
-            {% endfor %}
-          </span>
-        </div>
-
-        <div class="excerpt" style="color: #c9d2d9; line-height: 1.6;">
+        <!-- Content Excerpt -->
+        <div class="post-text" style="color: #8b949e; font-size: 13px; line-height: 1.5; margin-bottom: 10px;">
           {{ post.excerpt }}
         </div>
+      </div>
 
-        <div style="margin-top: 15px;">
-          <a href="{{ post.url }}" style="color: #58a6ff; font-weight: bold; text-decoration: none; font-size: 14px;">READ MORE →</a>
+      <div>
+        <!-- Category Badges -->
+        <div style="margin: 10px 0; font-size: 11px;">
+          {% for category in post.categories %}
+            <span style="background: #21262d; color: #38bdf8; padding: 2px 6px; border-radius: 4px; margin-right: 3px;">{{ category }}</span>
+          {% endfor %}
         </div>
-      </article>
-    {% endif %}
+
+        <a href="{{ post.url }}" style="display: block; text-align: center; background: #238636; color: white; padding: 8px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">အသေးစိတ်ကြည့်ရန် →</a>
+      </div>
+    </article>
   {% endfor %}
-
-  <!-- ၂။ Normal Posts -->
-  {% for post in site.posts %}
-    {% unless post.pin == true %}
-      <article class="post" style="margin-bottom: 35px; background: #161b22; padding: 20px; border-radius: 12px; border: 1px solid #30363d;">
-        <h2 style="margin-top: 0;">
-          <a href="{{ post.url }}" style="color: #58a6ff; text-decoration: none;">{{ post.title }}</a>
-        </h2>
-
-        <!-- Search မှတ်မိစေရန် Category နှင့် Tags များ ပင်မစာမျက်နှာတွင် ထုတ်ပြခြင်း -->
-        <div style="margin: 10px 0; font-size: 13px; color: #8b949e;">
-          <span>📁 Category: 
-            {% for category in post.categories %}
-              <span style="background: #21262d; color: #38bdf8; padding: 2px 6px; border-radius: 4px; margin-right: 4px;">{{ category }}</span>
-            {% endfor %}
-          </span>
-          &nbsp;•&nbsp;
-          <span>🏷️ Tags: 
-            {% for tag in post.tags %}
-              <span style="background: #21262d; color: #fbbf24; padding: 2px 6px; border-radius: 4px; margin-right: 4px;">{{ tag }}</span>
-            {% endfor %}
-          </span>
-        </div>
-
-        <div class="excerpt" style="color: #c9d2d9; line-height: 1.6;">
-          {{ post.excerpt }}
-        </div>
-
-        <div style="margin-top: 15px;">
-          <a href="{{ post.url }}" style="color: #58a6ff; font-weight: bold; text-decoration: none; font-size: 14px;">READ MORE →</a>
-        </div>
-      </article>
-    {% endunless %}
-  {% endfor %}
-
 </div>
 
-<!-- Live Search JavaScript -->
+<!-- 6. JavaScript for Live Search & Category Filter -->
 <script>
   function searchPosts() {
     let input = document.getElementById('search-input').value.toLowerCase();
-    let posts = document.getElementsByClassName('post');
+    let cards = document.getElementsByClassName('post-card');
 
-    for (let i = 0; i < posts.length; i++) {
-      let postContent = posts[i].innerText || posts[i].textContent;
-      if (postContent.toLowerCase().indexOf(input) > -1) {
-        posts[i].style.display = ""; 
+    for (let i = 0; i < cards.length; i++) {
+      let content = cards[i].innerText || cards[i].textContent;
+      if (content.toLowerCase().indexOf(input) > -1) {
+        cards[i].style.display = "flex"; 
       } else {
-        posts[i].style.display = "none"; 
+        cards[i].style.display = "none"; 
+      }
+    }
+  }
+
+  function filterCategory(catName) {
+    let cards = document.getElementsByClassName('post-card');
+    if(catName === 'all') {
+      for (let i = 0; i < cards.length; i++) cards[i].style.display = "flex";
+      return;
+    }
+    for (let i = 0; i < cards.length; i++) {
+      let content = cards[i].innerText || cards[i].textContent;
+      if (content.indexOf(catName) > -1) {
+        cards[i].style.display = "flex";
+      } else {
+        cards[i].style.display = "none";
       }
     }
   }
