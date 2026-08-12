@@ -1,7 +1,9 @@
 <div style="background: #161b22; border: 1px solid #30363d; border-radius: 12px; padding: 20px; color: #c9d2d9; margin-bottom: 25px; box-shadow: 0 4px 8px rgba(0,0,0,0.2);">
+  
   <div style="text-align: center; margin-bottom: 15px;">
     <img src="{{ include.image }}" alt="Book Cover" style="max-width: 250px; border-radius: 8px; border: 1px solid #30363d;">
   </div>
+
   <h3 style="color: #58a6ff; margin-top: 0; font-size: 20px;">{{ include.title }}</h3>
   <p style="font-size: 16px; color: #f0883e; font-weight: bold; margin-bottom: 5px;">💵 ဈေးနှုန်း - {{ include.price }}</p>
   <p style="font-size: 14px; color: #38bdf8; margin-bottom: 15px;">✍️ စာရေးသူ - {{ include.author }}</p>
@@ -11,5 +13,19 @@
     <p style="margin: 5px 0;">📄 <strong>စာမျက်နှာ:</strong> {{ include.pages }}</p>
     <p style="margin: 5px 0;">📝 <strong>စက္ကူ:</strong> {{ include.paper }}</p>
   </div>
+
   {{ include.content }}
+
+  <hr style="border: none; border-top: 1px solid #30363d; margin: 15px 0;">
+
+  <!-- Telegram နှင့် Viber ဆက်သွယ်ရန် ခလုတ်များ -->
+  <div style="text-align: center; display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
+    <a href="https://t.me/tetluukyawsarpay" target="_blank" style="background: #0088cc; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; display: inline-block;">
+      ✈️ Telegram ဖြင့် အော်ဒါတင်ရန်
+    </a>
+    <a href="viber://chat?number=%2B959259289159" style="background: #7360f2; color: white; padding: 10px 18px; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: bold; display: inline-block;">
+      🟣 Viber ဖြင့် ဆက်သွယ်ရန်
+    </a>
+  </div>
+
 </div>
