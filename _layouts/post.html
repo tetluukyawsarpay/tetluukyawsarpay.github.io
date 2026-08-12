@@ -2,12 +2,13 @@
 layout: default
 ---
 
-<!-- Post Header Banner (Logo ရဲ့ အပြိုရောင်နှင့် ရွှေရောင်ကို အခြေခံထားသော ပုံစံ) -->
+<!-- Post Header Banner -->
 <div style="background: linear-gradient(135deg, #0099ff, #0056b3); padding: 30px 20px; border-radius: 12px; text-align: center; color: white; margin-bottom: 25px; box-shadow: 0 4px 15px rgba(0,153,255,0.3); border: 2px solid #ffc107;">
   <h1 style="margin: 0 0 15px 0; font-size: 24px; font-weight: bold; text-shadow: 1px 1px 3px rgba(0,0,0,0.3);">{{ page.title }}</h1>
   <div style="font-size: 14px; opacity: 0.95;">
     <span>📅 {{ page.date | date: "%Y-%m-%d" }}</span> &nbsp;•&nbsp; 
-    <span>✍️ တက်လူကျော်စာပေ</span>
+    <!-- ဤနေရာတွင် page.author ကို တိုက်ရိုက်ခေါ်သုံးထားပါသည် -->
+    <span>✍️ {% if page.author %}{{ page.author }}{% else %}တက်လူကျော်စာပေ{% endif %}</span>
   </div>
   <div style="margin-top: 12px; font-size: 13px; background: #ffc107; color: #000; font-weight: bold; display: inline-block; padding: 4px 14px; border-radius: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.2);">
     📖 စာအုပ်အညွှန်း
@@ -29,12 +30,12 @@ layout: default
   </span>
 </div>
 
-<!-- Post Content Container (စာအုပ်အရောင်းပြခန်းကွက်) -->
+<!-- Post Content Container -->
 <div class="post-content" style="background: #161b22; color: #c9d2d9; padding: 25px; border-radius: 12px; border: 1px solid #0099ff; line-height: 1.8; box-shadow: 0 4px 12px rgba(0,0,0,0.3);">
   {{ content }}
 </div>
 
-<!-- Bottom Back Button (ပင်မစာမျက်နှာသို့ ပြန်ရန် ခလုတ်) -->
+<!-- Bottom Back Button -->
 <div style="margin-top: 25px; text-align: center;">
   <a href="{{ site.baseurl }}/" style="background: #0099ff; color: white; padding: 10px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; display: inline-block; font-size: 14px; box-shadow: 0 3px 8px rgba(0,153,255,0.4);">← ပင်မစာမျက်နှာသို့ ပြန်ရန်</a>
 </div>
