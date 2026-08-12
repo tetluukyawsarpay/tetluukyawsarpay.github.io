@@ -3,11 +3,11 @@ layout: default
 ---
 
 <!-- Header Hero Card (နဖူးစီးကတ်ပြား) -->
-<div style="background: #161b22; padding: 25px; border-radius: 12px; text-align: center; color: white; margin-bottom: 20px; border: 1px solid #30363d;">
+<div style="background: linear-gradient(135deg, #0099ff, #0056b3); padding: 25px; border-radius: 12px; text-align: center; color: white; margin-bottom: 20px; border: 2px solid #ffc107; box-shadow: 0 4px 12px rgba(0,153,255,0.3);">
   <h2 style="margin: 0 0 10px 0; font-size: 24px;">တက်လူကျော်စာပေ</h2>
-  <p style="color: #8b949e; margin: 0 0 15px 0;">သမိုင်း၊ နိုင်ငံရေးနှင့် သုတစာပေ စာအုပ်အညွှန်းများ</p>
+  <p style="color: #e0f2fe; margin: 0 0 15px 0;">သမိုင်း၊ နိုင်ငံရေးနှင့် သုတစာပေ စာအုပ်အညွှန်းများနှင့် အရောင်းပြခန်း</p>
   
-  <!-- Social Buttons (ဆက်သွယ်ရန် ခလုတ်များ) -->
+  <!-- Social Buttons -->
   <div>
     <a href="https://www.facebook.com/tetlukyaw" target="_blank" style="background: #1877f2; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 14px; display: inline-block; margin: 3px;">Facebook</a>
     <a href="https://t.me/tetluukyawsarpay" target="_blank" style="background: #0088cc; color: white; padding: 6px 14px; border-radius: 6px; text-decoration: none; font-size: 14px; display: inline-block; margin: 3px;">Telegram</a>
@@ -19,15 +19,12 @@ layout: default
   <input type="text" id="search-input" placeholder="🔍 စာအုပ်အညွှန်း ရှာဖွေရန်..." style="width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #30363d; background: #0d1117; color: white; font-size: 15px; box-sizing: border-box;">
 </div>
 
-<!-- Post List (ပို့စ်များပြသရန်) -->
+<!-- Post List (ပို့စ်များပြသရန် - post.content ကို သုံးထားပါသည်) -->
 <div class="posts">
   {% for post in site.posts %}
-    <article class="post" style="background: #161b22; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #30363d;">
-      <h2 style="margin-top: 0;"><a href="{{ site.baseurl }}{{ post.url }}" style="color: #58a6ff; text-decoration: none;">{{ post.title }}</a></h2>
-      <div class="entry" style="color: #c9d2d9;">
-        {{ post.excerpt }}
-      </div>
-      <a href="{{ site.baseurl }}{{ post.url }}" class="read-more" style="color: #f0883e; font-weight: bold; text-decoration: none; display: inline-block; margin-top: 10px;">READ MORE →</a>
+    <article class="post" style="margin-bottom: 30px;">
+      <!-- excerpt အစား content ကို သုံးထားသဖြင့် စာအုပ်ပုံနှင့် အချက်အလက်များ ပင်မစာမျက်နှာတွင် တိုက်ရိုက်ပေါ်လာပါမည် -->
+      {{ post.content }}
     </article>
   {% endfor %}
 </div>
