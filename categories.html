@@ -1,0 +1,23 @@
+---
+layout: page
+title: "Categories & Tags"
+permalink: /categories/
+---
+
+<div style="color: #c9d2d9; padding: 20px; background: #161b22; border-radius: 12px; border: 1px solid #30363d;">
+  <h2 style="color: #58a6ff; border-bottom: 2px solid #30363d; padding-bottom: 10px;">📚 အဓိက ခေါင်းစဉ်အလိုက် ရှာဖွေရန်</h2>
+  
+  <!-- Categories List -->
+  <ul style="list-style: none; padding: 0;">
+    {% for category in site.categories %}
+      <li style="margin-bottom: 15px;">
+        <strong style="color: #f0883e; font-size: 18px;">📁 {{ category.first }}</strong> ({{ category.last | size }} ပို့စ်)
+        <ul style="margin-top: 5px;">
+          {% for post in category.last %}
+            <li><a href="{{ post.url }}" style="color: #58a6ff; text-decoration: none;">{{ post.title }}</a></li>
+          {% endfor %}
+        </ul>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
