@@ -2,7 +2,7 @@
 layout: default
 ---
 
-<!-- 1. Top Navigation Tabs -->
+<!-- 1. Top Navigation Bar (Tabs) -->
 <nav style="background: #161b22; border: 1px solid #30363d; border-radius: 10px; padding: 12px 20px; margin-bottom: 25px; display: flex; gap: 15px; overflow-x: auto; whitespace: nowrap; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
   <a href="/" style="color: #58a6ff; font-weight: bold; text-decoration: none; font-size: 14px; padding: 6px 12px; background: #21262d; border-radius: 6px;">🏠 ပင်မစာမျက်နှာ</a>
   <a href="#" onclick="filterCategory('သမိုင်း')" style="color: #c9d2d9; text-decoration: none; font-size: 14px; padding: 6px 12px; border-radius: 6px;">📜 သမိုင်းစာအုပ်များ</a>
@@ -60,22 +60,22 @@ layout: default
 
     </article>
 
-    <!-- စာအုပ်တစ်အုပ်ချင်းစီအတွက် Pop-up Modal Window -->
-    <div id="modal-{{ book.id }}" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(4px); overflow-y: auto;">
-      <div style="background: #161b22; border: 1px solid #30363d; border-radius: 12px; max-width: 600px; margin: 50px auto; padding: 25px; color: #c9d2d9; position: relative; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
+    <!-- Pop-up Modal Window -->
+    <div id="modal-{{ book.id }}" style="display: none; position: fixed; z-index: 9999; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(5px); overflow-y: auto;">
+      <div style="background: #161b22; border: 1px solid #30363d; border-radius: 12px; max-width: 620px; margin: 40px auto; padding: 25px; color: #c9d2d9; position: relative; box-shadow: 0 8px 24px rgba(0,0,0,0.6);">
         
-        <!-- ပိတ်ရန် ကြက်ခြေခတ် ခလုတ် -->
-        <span onclick="closeModal('modal-{{ book.id }}')" style="position: absolute; right: 15px; top: 12px; font-size: 24px; font-weight: bold; color: #8b949e; cursor: pointer;">&times;</span>
+        <!-- ပိတ်ရန် ခလုတ် -->
+        <span onclick="closeModal('modal-{{ book.id }}')" style="position: absolute; right: 18px; top: 12px; font-size: 26px; font-weight: bold; color: #8b949e; cursor: pointer;">&times;</span>
 
         <!-- စာအုပ်ပုံ အကြီး -->
         <div style="text-align: center; margin-bottom: 20px;">
-          <a href="{{ book.image }}" target="_blank">
-            <img src="{{ book.image }}" alt="{{ book.title }}" style="max-height: 350px; width: auto; max-width: 100%; border-radius: 8px; border: 1px solid #30363d; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
+          <a href="{{ book.image }}" target="_blank" title="ပုံကို နှိပ်၍ သီးသန့်ကြည့်ရန်">
+            <img src="{{ book.image }}" alt="{{ book.title }}" style="max-height: 360px; width: auto; max-width: 100%; border-radius: 8px; border: 1px solid #30363d; box-shadow: 0 4px 12px rgba(0,0,0,0.5);">
           </a>
         </div>
 
-        <h2 style="color: #58a6ff; margin-top: 0;">{{ book.title }}</h2>
-        <p style="color: #f0883e; font-size: 16px; font-weight: bold; margin: 5px 0;">💵 ဈေးနှုန်း - {{ book.price }}</p>
+        <h2 style="color: #58a6ff; margin-top: 0; font-size: 20px;">{{ book.title }}</h2>
+        <p style="color: #f0883e; font-size: 17px; font-weight: bold; margin: 5px 0;">💵 ဈေးနှုန်း - {{ book.price }}</p>
         <p style="color: #38bdf8; font-size: 14px; margin: 5px 0;">✍️ စာရေးသူ - {{ book.author }}</p>
 
         <!-- အရွယ်အစားနှင့် စာမျက်နှာ အချက်အလက်များ -->
@@ -90,21 +90,37 @@ layout: default
           {{ book.detail }}
         </div>
 
-        <hr style="border: none; border-top: 1px solid #30363d; margin: 20px 0;">
+        <!-- စာအုပ်မှာယူရန် ဆက်သွယ်ရန်အပိုင်း နှင့် Viber/Telegram/Call Buttons -->
+        <div style="background: #0d1117; border: 1px solid #30363d; border-radius: 8px; padding: 15px; margin-top: 20px;">
+          <p style="color: #f0883e; font-size: 14px; font-weight: bold; margin-top: 0; margin-bottom: 12px;">
+            🛒 စာအုပ်မှာယူလိုပါက အောက်ပါခလုတ်များကို နှိပ်၍ တိုက်ရိုက်ဆက်သွယ်နိုင်ပါသည် -
+          </p>
+          
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <!-- Phone Call Button -->
+            <a href="tel:09259289159" style="flex: 1; min-width: 140px; text-align: center; background: #238636; color: white; padding: 10px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">
+              📞 ၀၉-၂၅၉ ၂၈၉ ၁၅၉
+            </a>
 
-        <!-- ဆက်သွယ်မှာယူရန် အချက်အလက် -->
-        <p style="color: #f0883e; font-size: 14px; font-weight: bold; line-height: 1.6;">
-          • စာအုပ်များ ဝယ်ယူလိုပါက အောက်ပါနည်းလမ်းများဖြင့် ဆက်သွယ်နိုင်ပါသည်။<br>
-          • ဖုန်း - ၀၉ ၂၅၉ ၂၈၉ ၁၅၉ ဖုန်းဆက်၍ ဖြစ်စေ Viber/Telegram မှဖြစ်စေ မှာယူနိုင်ပါသည်။
-        </p>
+            <!-- Viber Button -->
+            <a href="viber://chat?number=%2B959259289159" target="_blank" style="flex: 1; min-width: 120px; text-align: center; background: #7360f2; color: white; padding: 10px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">
+              💬 Viber မှမှာမည်
+            </a>
 
-        <button onclick="closeModal('modal-{{ book.id }}')" style="width: 100%; padding: 10px; background: #30363d; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 10px;">ပိတ်မည်</button>
+            <!-- Telegram Button -->
+            <a href="https://t.me/tetluukyawsarpay" target="_blank" style="flex: 1; min-width: 120px; text-align: center; background: #0088cc; color: white; padding: 10px 12px; border-radius: 6px; text-decoration: none; font-size: 13px; font-weight: bold;">
+              ✈️ Telegram မှမှာမည်
+            </a>
+          </div>
+        </div>
+
+        <button onclick="closeModal('modal-{{ book.id }}')" style="width: 100%; padding: 10px; background: #30363d; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: bold; margin-top: 15px;">ပိတ်မည်</button>
       </div>
     </div>
   {% endfor %}
 </div>
 
-<!-- 6. JavaScript for Live Search, Filter & Modal Popup -->
+<!-- 6. JavaScript -->
 <script>
   function searchPosts() {
     let input = document.getElementById('search-input').value.toLowerCase();
@@ -138,11 +154,19 @@ layout: default
 
   function openModal(id) {
     document.getElementById(id).style.display = "block";
-    document.body.style.overflow = "hidden"; // အောက်က page မရွေ့အောင် scroll ပိတ်ထားခြင်း
+    document.body.style.overflow = "hidden";
   }
 
   function closeModal(id) {
     document.getElementById(id).style.display = "none";
-    document.body.style.overflow = "auto"; // scroll ပြန်ဖွင့်ခြင်း
+    document.body.style.overflow = "auto";
+  }
+
+  // Modal အပြင်ဘက်ကို ကလစ်နှိပ်လျှင် အလိုအလျောက် ပိတ်သွားစေရန်
+  window.onclick = function(event) {
+    if (event.target.id && event.target.id.startsWith('modal-')) {
+      event.target.style.display = "none";
+      document.body.style.overflow = "auto";
+    }
   }
 </script>
