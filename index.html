@@ -85,6 +85,7 @@ layout: default
 
 <div class="tlk-wrap">
 <div class="tlk-inner">
+  {% assign tlk_books = site.data.books | concat: site.data.books2 %}
 
   <!-- top bar -->
   <header class="tlk-topbar">
@@ -98,7 +99,7 @@ layout: default
 
   <!-- category pills (built from book data, counts included) -->
   {% assign raw_cats = "" %}
-  {% for book in site.data.books %}
+  {% for book in tlk_books %}
     {% assign parts = book.categories | split: "," %}
     {% for p in parts %}
       {% assign cp = p | strip %}
@@ -107,10 +108,10 @@ layout: default
   {% endfor %}
   {% assign cats = raw_cats | split: "|" | uniq | sort %}
   <div class="tlk-pills" id="tlk-pills">
-    <button class="tlk-pill active" data-cat="all">📚 အားလုံး <span class="cnt">{{ site.data.books.size }}</span></button>
+    <button class="tlk-pill active" data-cat="all">📚 အားလုံး <span class="cnt">{{ tlk_books.size }}</span></button>
     {% for cat in cats %}
       {% assign cnt = 0 %}
-      {% for book in site.data.books %}
+      {% for book in tlk_books %}
         {% assign parts = book.categories | split: "," %}
         {% for p in parts %}{% assign pp = p | strip %}{% if pp == cat %}{% assign cnt = cnt | plus: 1 %}{% endif %}{% endfor %}
       {% endfor %}
@@ -123,7 +124,7 @@ layout: default
 
   <!-- pinned / featured book -->
   {% assign pinned_book = nil %}
-  {% for book in site.data.books %}
+  {% for book in tlk_books %}
     {% if book.pinned == "1" %}
       {% assign pinned_book = book %}
     {% endif %}
@@ -148,7 +149,7 @@ layout: default
   <section id="tlk-latest">
     <div class="tlk-sec-head"><h3>🆕 နောက်ဆုံးရ စာအုပ်များ</h3></div>
     <div class="tlk-hscroll">
-      {% assign books_newest = site.data.books | reverse %}
+      {% assign books_newest = tlk_books | reverse %}
       {% for book in books_newest limit:8 %}
       <article class="book-card" onclick="openModal('modal-{{ book.id }}')">
         <div class="cover"><img src="{{ book.image }}" alt="{{ book.title }}" loading="lazy"></div>
@@ -164,7 +165,7 @@ layout: default
   <section id="tlk-all">
     <div class="tlk-sec-head"><h3>📖 စာအုပ်အညွှန်းများနှင့် စာအုပ်များ</h3><span class="sub" id="tlk-count"></span></div>
     <div class="tlk-grid" id="tlk-grid">
-      {% for book in site.data.books %}
+      {% for book in tlk_books %}
       <article class="book-card" data-cats="{{ book.categories }}" data-search="{{ book.title | downcase }} {{ book.author | downcase }}" onclick="openModal('modal-{{ book.id }}')">
         <div class="cover"><img src="{{ book.image }}" alt="{{ book.title }}" loading="lazy"></div>
         <h4>{{ book.title }}</h4>
@@ -193,7 +194,7 @@ layout: default
 </div>
 
   <!-- detail modals -->
-  {% for book in site.data.books %}
+  {% for book in tlk_books %}
   <div id="modal-{{ book.id }}" style="display:none; position:fixed; z-index:9999; left:0; top:0; width:100%; height:100%; background:rgba(0,0,0,.85); overflow-y:auto;">
     <div style="background:var(--tlk-card); border:1px solid var(--tlk-border); border-radius:12px; max-width:620px; margin:40px auto; padding:25px; color:var(--tlk-text); position:relative;">
       <span onclick="closeModal('modal-{{ book.id }}')" style="position:absolute; right:18px; top:12px; font-size:26px; font-weight:bold; color:var(--tlk-muted); cursor:pointer;">&times;</span>
