@@ -3,7 +3,8 @@ layout: default
 ---
 
 <style>
-  .tlk-wrap { max-width: 1120px; margin: 0 auto; padding: 0 12px 40px;
+  html { overflow-x: clip; }
+  .tlk-wrap { width: 100vw; margin-left: calc(50% - 50vw); box-sizing: border-box; padding: 0 20px 48px;
     --tlk-card: #161b22;
     --tlk-card2: #21262d;
     --tlk-text: #f0f3f6;
@@ -18,6 +19,7 @@ layout: default
     --tlk-promo-border: #6b4a1d;
     --tlk-cover-bg: #0d1117;
   }
+  .tlk-inner { max-width: 1180px; margin: 0 auto; }
 
   /* ---------- top bar ---------- */
   .tlk-topbar { display: flex; align-items: center; gap: 14px; padding: 16px 4px; flex-wrap: wrap; }
@@ -71,6 +73,7 @@ layout: default
 </style>
 
 <div class="tlk-wrap">
+<div class="tlk-inner">
 
   <!-- top bar -->
   <header class="tlk-topbar">
@@ -152,6 +155,8 @@ layout: default
     {% endfor %}
   </section>
   {% endif %}
+
+</div>
 
   <!-- detail modals -->
   {% for book in site.data.books %}
