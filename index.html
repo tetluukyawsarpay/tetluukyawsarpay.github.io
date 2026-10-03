@@ -43,6 +43,17 @@ layout: default
   /* ---------- promo banner ---------- */
   .tlk-promo { background: var(--tlk-promo-bg); border: 1px solid var(--tlk-promo-border); border-left: 4px solid var(--tlk-accent); padding: 13px 16px; border-radius: 10px; margin-bottom: 26px; color: var(--tlk-text); font-size: 14px; }
   .tlk-promo strong { color: var(--tlk-accent); }
+  /* ---------- pinned / featured book ---------- */
+  .tlk-featured { background: linear-gradient(135deg, #2d1f04, #1a1206); border: 1px solid var(--tlk-accent); border-radius: 12px; padding: 20px; margin-bottom: 28px; }
+  .tlk-featured-badge { display: inline-block; background: var(--tlk-accent); color: #141414; font-weight: 800; font-size: 13px; padding: 5px 14px; border-radius: 20px; margin-bottom: 14px; }
+  .tlk-featured-body { display: flex; gap: 22px; align-items: flex-start; }
+  .tlk-featured-body img { width: 175px; border-radius: 8px; border: 1px solid var(--tlk-border); cursor: pointer; flex-shrink: 0; }
+  .tlk-featured-info h2 { margin: 0 0 8px; font-size: 21px; color: var(--tlk-blue); cursor: pointer; line-height: 1.5; }
+  .tlk-featured-info .tlk-author { color: var(--tlk-muted); margin: 0 0 6px; font-size: 14px; }
+  .tlk-featured-info .tlk-price { color: var(--tlk-accent); font-weight: 800; font-size: 17px; margin: 0 0 10px; }
+  .tlk-featured-info .tlk-summary { color: var(--tlk-text); font-size: 14px; line-height: 1.75; margin: 0 0 16px; }
+  .tlk-featured-info .tlk-btn.order { background: var(--tlk-accent); color: #141414; border: none; cursor: pointer; }
+  @media (max-width: 640px) { .tlk-featured-body { flex-direction: column; } .tlk-featured-body img { width: 145px; } }
 
   /* ---------- sections ---------- */
   .tlk-sec-head { display: flex; align-items: baseline; justify-content: space-between; margin: 26px 0 14px; }
@@ -109,6 +120,29 @@ layout: default
 
   <!-- promo -->
   <div class="tlk-promo">📢 <strong>အထူးအသိပေးချက်</strong> — ယခုလကုန်အထိ စာအုပ် (၃) အုပ်နှင့်အထက် မှာယူပါက ပို့ဆောင်ခ အခမဲ့ဖြင့် ပို့ဆောင်ပေးနေပါပြီ။</div>
+
+  <!-- pinned / featured book -->
+  {% assign pinned_book = nil %}
+  {% for book in site.data.books %}
+    {% if book.pinned == "1" %}
+      {% assign pinned_book = book %}
+    {% endif %}
+  {% endfor %}
+  {% if pinned_book %}
+  <section class="tlk-featured">
+    <div class="tlk-featured-badge">📌 တိုက်ထုတ်ရဲ့ နောက်ဆုံးထွက် စာအုပ်</div>
+    <div class="tlk-featured-body">
+      <img src="{{ pinned_book.image }}" alt="{{ pinned_book.title }}" onclick="openModal('modal-{{ pinned_book.id }}')">
+      <div class="tlk-featured-info">
+        <h2 onclick="openModal('modal-{{ pinned_book.id }}')">{{ pinned_book.title }}</h2>
+        <p class="tlk-author">✍️ {{ pinned_book.author }}</p>
+        <p class="tlk-price">💵 {{ pinned_book.price }}</p>
+        <p class="tlk-summary">{{ pinned_book.summary }}</p>
+        <button class="tlk-btn order" onclick="openModal('modal-{{ pinned_book.id }}')">အသေးစိတ်ကြည့်ရန် / မှာယူရန်</button>
+      </div>
+    </div>
+  </section>
+  {% endif %}
 
   <!-- latest -->
   <section id="tlk-latest">
