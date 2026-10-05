@@ -271,7 +271,7 @@ layout: default
   })();
 
   function bookUrl(id) {
-    return location.origin + location.pathname + '?book=' + encodeURIComponent(id);
+    return location.origin + '/books/' + encodeURIComponent(id) + '/';
   }
   function shareBook(id, how) {
     var url = bookUrl(id);
