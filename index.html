@@ -63,6 +63,8 @@ layout: default
   .tlk-coll-foot { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--tlk-border); }
   .tlk-coll-total { font-size: 16px; font-weight: 800; color: var(--tlk-accent); }
   .tlk-coll-total small { display: block; font-size: 11px; color: var(--tlk-muted); font-weight: 400; margin-top: 2px; }
+  .tlk-coll-total s { color: var(--tlk-muted); font-weight: 400; font-size: 13px; }
+  .tlk-coll-total .tlk-bundle { color: #3fb950; }
   .tlk-coll-order { display: flex; gap: 10px; flex-wrap: wrap; }
   .tlk-btn.call { background: #238636; }
   .tlk-btn.viber { background: #7360f2; }
@@ -181,7 +183,7 @@ layout: default
         {% endfor %}
       </div>
       <div class="tlk-coll-foot">
-        <div class="tlk-coll-total">💵 စုစုပေါင်း: {{ coll.total }}<small>တစ်အုပ်ချင်းဈေးများ ပေါင်းထားခြင်းဖြစ်သည်</small></div>
+        <div class="tlk-coll-total">{% if coll.bundle %}💵 တစ်စုံလုံး: <s>{{ coll.total }}</s> <span class="tlk-bundle">{{ coll.bundle }}</span><small>အတွဲလိုက် မှာယူပါက လျှော့ဈေးရရှိမည်</small>{% else %}💵 စုစုပေါင်း: {{ coll.total }}<small>တစ်အုပ်ချင်းဈေးများ ပေါင်းထားခြင်းဖြစ်သည်</small>{% endif %}</div>
         <div class="tlk-coll-order">
           <a class="tlk-btn call" href="tel:09259289159">📞 ဖုန်းဆက်မှာယူရန်</a>
           <a class="tlk-btn viber" href="viber://chat?number=%2B959259289159" target="_blank">💬 Viber</a>
