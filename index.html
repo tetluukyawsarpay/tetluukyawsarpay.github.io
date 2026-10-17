@@ -55,6 +55,18 @@ layout: default
   .tlk-featured-info .tlk-btn.order { background: var(--tlk-accent); color: #141414; border: none; cursor: pointer; }
   @media (max-width: 640px) { .tlk-featured-body { flex-direction: column; } .tlk-featured-body img { width: 145px; } }
 
+  /* ---------- collections ---------- */
+  .tlk-coll { background: linear-gradient(135deg, #1c2b1a, #101a0f); border: 1px solid #3d5a3a; border-radius: 12px; padding: 20px; margin-bottom: 28px; }
+  .tlk-coll-head h4 { margin: 0 0 6px; font-size: 18px; color: var(--tlk-text); }
+  .tlk-coll-head h4 span { font-size: 13px; color: var(--tlk-accent); font-weight: 700; margin-left: 8px; white-space: nowrap; }
+  .tlk-coll-desc { color: var(--tlk-muted); font-size: 13.5px; line-height: 1.7; margin: 0 0 14px; }
+  .tlk-coll-foot { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--tlk-border); }
+  .tlk-coll-total { font-size: 16px; font-weight: 800; color: var(--tlk-accent); }
+  .tlk-coll-total small { display: block; font-size: 11px; color: var(--tlk-muted); font-weight: 400; margin-top: 2px; }
+  .tlk-coll-order { display: flex; gap: 10px; flex-wrap: wrap; }
+  .tlk-btn.call { background: #238636; }
+  .tlk-btn.viber { background: #7360f2; }
+
   /* ---------- sections ---------- */
   .tlk-sec-head { display: flex; align-items: baseline; justify-content: space-between; margin: 26px 0 14px; }
   .tlk-sec-head h3 { margin: 0; font-size: 16px; letter-spacing: .04em; color: var(--tlk-accent); font-weight: 800; }
@@ -142,6 +154,42 @@ layout: default
         <button class="tlk-btn order" onclick="openModal('modal-{{ pinned_book.id }}')">အသေးစိတ်ကြည့်ရန် / မှာယူရန်</button>
       </div>
     </div>
+  </section>
+  {% endif %}
+
+  <!-- collections -->
+  {% if site.data.collections %}
+  <section id="tlk-collections">
+    <div class="tlk-sec-head"><h3>📚 Collections</h3><span class="sub">အတွဲလိုက် စုစည်းထားသော စာအုပ်များ</span></div>
+    {% for coll in site.data.collections %}
+    <div class="tlk-coll">
+      <div class="tlk-coll-head"><h4>{{ coll.title }} <span>{{ coll.subtitle }}</span></h4></div>
+      <p class="tlk-coll-desc">{{ coll.description }}</p>
+      <div class="tlk-hscroll">
+        {% assign id_list = coll.book_ids | split: "|" %}
+        {% for bid in id_list %}
+          {% for book in tlk_books %}
+            {% if book.id == bid %}
+            <article class="book-card" onclick="openModal('modal-{{ book.id }}')">
+              <div class="cover"><img src="{{ book.image }}" alt="{{ book.title }}" loading="lazy"></div>
+              <h4>{{ book.title }}</h4>
+              <p class="author">{{ book.author }}</p>
+              <p class="price">{{ book.price }}</p>
+            </article>
+            {% endif %}
+          {% endfor %}
+        {% endfor %}
+      </div>
+      <div class="tlk-coll-foot">
+        <div class="tlk-coll-total">💵 စုစုပေါင်း: {{ coll.total }}<small>တစ်အုပ်ချင်းဈေးများ ပေါင်းထားခြင်းဖြစ်သည်</small></div>
+        <div class="tlk-coll-order">
+          <a class="tlk-btn call" href="tel:09259289159">📞 ဖုန်းဆက်မှာယူရန်</a>
+          <a class="tlk-btn viber" href="viber://chat?number=%2B959259289159" target="_blank">💬 Viber</a>
+          <a class="tlk-btn tg" href="https://t.me/tetluukyawsarpay" target="_blank">✈️ Telegram</a>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
   </section>
   {% endif %}
 
@@ -240,6 +288,7 @@ layout: default
     var emptyMsg = document.getElementById('tlk-empty');
     var countEl = document.getElementById('tlk-count');
     var latestSec = document.getElementById('tlk-latest');
+    var collSec = document.getElementById('tlk-collections');
 
     function applyFilters() {
       var q = searchInput.value.trim().toLowerCase();
@@ -255,6 +304,7 @@ layout: default
       emptyMsg.hidden = shown > 0;
       countEl.textContent = shown + ' အုပ်';
       latestSec.style.display = (q || activeCat !== 'all') ? 'none' : '';
+      if (collSec) collSec.style.display = (q || activeCat !== 'all') ? 'none' : '';
     }
 
     var pills = document.querySelectorAll('#tlk-pills .tlk-pill');
