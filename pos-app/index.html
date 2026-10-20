@@ -42,7 +42,7 @@
   .chips button { flex: 1; background: #e7eef5; color: #0b5394; padding: 8px; font-size: 14px; }
   .chips button.sel { background: #0b5394; color: #fff; }
   nav { position: fixed; left: 0; right: 0; bottom: 0; background: #fff; z-index: 5;
-        display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid #cfdae6; }
+        display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; border-top: 1px solid #cfdae6; }
   nav button { background: none; color: #456; border-radius: 0; padding: 13px 4px; font-size: 15.5px; }
   nav button.on { color: #0b5394; font-weight: bold; box-shadow: inset 0 3px 0 #0b5394; }
   .note { font-size: 13px; color: #567; line-height: 1.55; }
@@ -61,6 +61,8 @@
   .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 88px; z-index: 9;
            background: #17222e; color: #fff; padding: 10px 16px; border-radius: 20px;
            font-size: 14.5px; display: none; max-width: 88vw; text-align: center; }
+  .bdg { display: none; background: #b03a2e; color: #fff; border-radius: 10px;
+         padding: 0 7px; font-size: 12.5px; font-weight: bold; }
   @media print {
     body { padding: 0; background: #fff; }
     header, main, nav, .toast { display: none !important; }
@@ -77,6 +79,10 @@
 </header>
 
 <main>
+  <div id="warnBar" style="display:none; background:#fdf3e0; border:1px solid #e0b25f; color:#7a5410; border-radius:12px; padding:10px 12px; margin-bottom:12px; font-size:14.5px;">
+    ⚠️ <span id="warnText"></span>
+    <button class="mini" id="btnWarnGo" style="background:#b03a2e; color:#fff; margin-left:8px;">Export လုပ်မည်</button>
+  </div>
   <!-- ============ BOOKS ============ -->
   <section id="sec-books" class="on">
     <div id="scannerWrap" class="card">
@@ -155,12 +161,61 @@
     </div>
   </section>
 
+  <!-- ============ ORDER ============ -->
+  <section id="sec-order">
+    <div class="card">
+      <div class="row2">
+        <div><label>ဝယ်သူ အမည် *</label><input id="o_customer"/></div>
+        <div><label>ဖုန်း</label><input id="o_phone" inputmode="tel"/></div>
+      </div>
+      <label>ပို့ရမည့် လိပ်စာ</label>
+      <input id="o_address"/>
+      <div class="row2">
+        <div><label>Channel</label>
+          <select id="o_channel"><option>Facebook</option><option>Viber</option><option>Telegram</option><option>ဖုန်း</option></select></div>
+        <div><label>ပို့နည်း</label>
+          <select id="o_delivery"><option>Royal Express</option><option>စာတိုက်</option><option>ကားတင်</option><option>ဆိုင်လာ ယူ</option></select></div>
+      </div>
+      <div class="row2">
+        <div><label>ငွေပေးပုံ</label>
+          <select id="o_payment"><option>COD</option><option>ကြိုလွှဲ</option></select></div>
+        <div><label>ပို့ခ (ကျပ်)</label><input id="o_fee" inputmode="numeric" value="0"/></div>
+      </div>
+    </div>
+    <div class="card">
+      <button class="scan" id="btnScanOrder">📷 Barcode Scan (ISBN)</button>
+      <label>ISBN</label>
+      <input id="ol_isbn" inputmode="numeric" placeholder="978..."/>
+      <label>စာအုပ်အမည် *</label>
+      <input id="ol_title"/>
+      <div class="row3">
+        <div><label>မူရင်းဈေး *</label><input id="ol_price" inputmode="numeric"/></div>
+        <div><label>အုပ်ရေ *</label><input id="ol_qty" inputmode="numeric" value="1"/></div>
+        <div><label>လျော့ %</label><input id="ol_disc" inputmode="decimal" value="0"/></div>
+      </div>
+      <button class="big" id="btnAddOLine" style="margin-top:12px;">စာရင်းထဲ ထည့်မည်</button>
+    </div>
+    <div class="card">
+      <div style="font-weight:bold;">ဒီ Order ထဲက စာအုပ်များ</div>
+      <div id="oLineList"></div>
+      <div class="total">စာအုပ်: <span id="oBooksTotal">0</span> + ပို့ခ: <span id="oFeeShow">0</span><br/>စုစုပေါင်း: <span id="oGrand">0</span> ကျပ်</div>
+      <button class="big" id="btnSaveOrder">Order သိမ်းမည်</button>
+    </div>
+    <div class="card">
+      <div style="font-weight:bold;">သိမ်းထားသော Order များ <span id="orderCount"></span></div>
+      <div id="orderList"></div>
+      <div class="note">Order တွေက PC မှာ ဘောင်ချာ မဖြစ်သေးပါ — session သွင်းပြီးမှ PC ဘက်က ဆက်လုပ်ရမယ်။</div>
+    </div>
+  </section>
+
   <!-- ============ EXPORT ============ -->
   <section id="sec-export">
     <div class="card">
       <div style="font-weight:bold;">PC သို့ ပို့ရန်</div>
       <p class="note" id="exportSummary"></p>
       <button class="big" id="btnExport">Session ဖိုင် ထုတ်မည် (.json)</button>
+      <button class="big alt" id="btnExportAll" style="margin-top:10px;">အကုန် ပြန် ထုတ်မည် (ထုတ်ပြီးသား အပါအဝင်)</button>
+      <p class="note">ပို့ထားတဲ့ ဖိုင် ပျောက်သွားရင် ဒီခလုတ်နဲ့ မှတ်တမ်း အကုန် ပြန် ထုတ်လို့ ရတယ်။ (ထုတ်ပြီး အမှတ်အသားတွေ မပြောင်းဘူး။)</p>
       <p class="note">ဖိုင် ထွက်လာရင် Telegram/USB နဲ့ PC ဆီ ပို့ပြီး POS ထဲက
         <b>“ဖုန်း Session သွင်းမည်”</b> နဲ့ သွင်းပါ။ တစ်ဖိုင်တည်း နှစ်ခါ သွင်းမိလည်း
         နှစ်ခါ မဝင်အောင် ID နဲ့ စစ်ထားတယ်။</p>
@@ -177,7 +232,8 @@
 <nav>
   <button id="tab-books" class="on">📚 စာအုပ်သွင်း</button>
   <button id="tab-sale">🧾 အရောင်း</button>
-  <button id="tab-export">📤 Export</button>
+  <button id="tab-order">📦 အမှာ</button>
+  <button id="tab-export">📤 Export <span class="bdg" id="expBadge"></span></button>
 </nav>
 <div class="toast" id="toast"></div>
 
@@ -198,10 +254,12 @@ function nowStr(d) { d = d || new Date();
          " " + pad2(d.getHours()) + ":" + pad2(d.getMinutes()); }
 function mm(n) { return Number(n || 0).toLocaleString("en-US"); }
 function calcUnit(list, disc) { return Math.round((Number(list) || 0) * (1 - (parseFloat(disc) || 0) / 100)); }
-function emptyState() { return { books: [], sales: [] }; }
+function emptyState() { return { books: [], sales: [], orders: [] }; }
 function loadState() {
   try { const s = JSON.parse(localStorage.getItem(LS_KEY));
-        if (s && Array.isArray(s.books) && Array.isArray(s.sales)) return s; } catch (e) {}
+        if (s && Array.isArray(s.books) && Array.isArray(s.sales)) {
+          if (!Array.isArray(s.orders)) s.orders = [];
+          return s; } } catch (e) {}
   return emptyState();
 }
 function addBook(st, data) {
@@ -240,23 +298,48 @@ function makeSale(st, customer, lines) {
   st.sales.push(sale);
   return sale;
 }
-function buildSession(st) {
-  return { app: "tlk-phone", version: 1, exported_at: nowStr(),
-    books: st.books.filter(b => !b.exported).map(b => ({ id: b.id, isbn: b.isbn,
+function makeOrder(st, data) {
+  const order = { id: uid(), customer: (data.customer || "").trim(),
+    phone: (data.phone || "").trim(), address: (data.address || "").trim(),
+    channel: data.channel || "Facebook",
+    delivery: data.delivery || "Royal Express",
+    payment: data.payment || "COD", fee: Number(data.fee) || 0,
+    created_at: nowStr(), status: "new",
+    lines: data.lines.map(l => ({ isbn: l.isbn || "", title: l.title, qty: l.qty,
+      list_price: l.list_price, discount: l.discount || 0,
+      unit_price: calcUnit(l.list_price, l.discount) })), exported: false };
+  order.books_total = order.lines.reduce((a, l) => a + l.qty * l.unit_price, 0);
+  order.total = order.books_total + order.fee;
+  st.orders.push(order);
+  return order;
+}
+function orderRef(o) { return "ORD-" + o.id.slice(-6).toUpperCase(); }
+function buildSession(st, all) {
+  const keep = r => all || !r.exported;
+  return { app: "tlk-phone", version: 2, exported_at: nowStr(),
+    books: st.books.filter(keep).map(b => ({ id: b.id, isbn: b.isbn,
       title: b.title, author: b.author, publisher: b.publisher, category: b.category,
       list_price: b.list_price, buy_discount: b.buy_discount, qty: b.qty,
       created_at: b.created_at })),
-    sales: st.sales.filter(s => !s.exported).map(s => ({ id: s.id, customer: s.customer,
+    sales: st.sales.filter(keep).map(s => ({ id: s.id, customer: s.customer,
       created_at: s.created_at, total: s.total,
       lines: s.lines.map(l => ({ isbn: l.isbn, title: l.title, qty: l.qty,
+        list_price: l.list_price, discount: l.discount, unit_price: l.unit_price })) })),
+    orders: (st.orders || []).filter(keep).map(o => ({ id: o.id, customer: o.customer,
+      phone: o.phone, address: o.address, channel: o.channel, delivery: o.delivery,
+      payment: o.payment, fee: o.fee, books_total: o.books_total, total: o.total,
+      created_at: o.created_at, status: o.status,
+      lines: o.lines.map(l => ({ isbn: l.isbn, title: l.title, qty: l.qty,
         list_price: l.list_price, discount: l.discount, unit_price: l.unit_price })) })) };
 }
-function markAllExported(st) { st.books.forEach(b => b.exported = true); st.sales.forEach(s => s.exported = true); }
-function clearExported(st) { st.books = st.books.filter(b => !b.exported); st.sales = st.sales.filter(s => !s.exported); }
+function markAllExported(st) { st.books.forEach(b => b.exported = true); st.sales.forEach(s => s.exported = true); (st.orders || []).forEach(o => o.exported = true); }
+function clearExported(st) { st.books = st.books.filter(b => !b.exported); st.sales = st.sales.filter(s => !s.exported); st.orders = (st.orders || []).filter(o => !o.exported); }
 function pendingCounts(st) {
-  const b = st.books.filter(x => !x.exported), s = st.sales.filter(x => !x.exported);
+  const b = st.books.filter(x => !x.exported), s = st.sales.filter(x => !x.exported),
+        o = (st.orders || []).filter(x => !x.exported);
   return { bookTitles: b.length, bookCopies: b.reduce((a, x) => a + x.qty, 0),
-           saleCount: s.length, saleTotal: s.reduce((a, x) => a + x.total, 0) };
+           saleCount: s.length, saleTotal: s.reduce((a, x) => a + x.total, 0),
+           orderCount: o.length, orderTotal: o.reduce((a, x) => a + x.total, 0) };
 }
 function receiptRef(sale) { return "PH-" + sale.id.slice(-6).toUpperCase(); }
 function esc(t) { return String(t == null ? "" : t).replace(/[&<>"']/g,
@@ -289,14 +372,26 @@ if (typeof document !== "undefined") {
   const $ = id => document.getElementById(id);
   const main = document.querySelector("main");
   main.insertBefore($("scannerWrap"), main.firstChild);
-  function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {} }
+  function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {} refreshChrome(); }
+  function refreshChrome() {
+    const p = pendingCounts(state);
+    const n = p.bookTitles + p.saleCount + p.orderCount;
+    const b = $("expBadge");
+    b.style.display = n ? "inline-block" : "none";
+    b.textContent = n;
+    const wb = $("warnBar");
+    if (n) { $("warnText").innerHTML = `Export မလုပ်ရသေး <b>${n}</b> ခု ရှိတယ် — PC သို့ ပို့ဖို့ မမေ့ပါနှင့်။`;
+             wb.style.display = "block"; }
+    else wb.style.display = "none";
+  }
+  $("btnWarnGo").onclick = () => showTab("export");
   function toast(msg) { const t = $("toast"); t.textContent = msg; t.style.display = "block";
     clearTimeout(t._h); t._h = setTimeout(() => t.style.display = "none", 2400); }
 
   /* tabs */
   function showTab(name) {
     stopScan();
-    ["books", "sale", "export"].forEach(n => {
+    ["books", "sale", "order", "export"].forEach(n => {
       $("sec-" + n).classList.toggle("on", n === name);
       $("tab-" + n).classList.toggle("on", n === name);
     });
@@ -305,6 +400,7 @@ if (typeof document !== "undefined") {
   }
   $("tab-books").onclick = () => showTab("books");
   $("tab-sale").onclick = () => showTab("sale");
+  $("tab-order").onclick = () => showTab("order");
   $("tab-export").onclick = () => showTab("export");
 
   /* books */
@@ -421,37 +517,106 @@ if (typeof document !== "undefined") {
   $("btnCloseRc").onclick = () => { $("receiptView").style.display = "none"; $("saleMain").style.display = "block"; };
   $("btnPrintRc").onclick = () => window.print();
 
+  /* orders */
+  let draftOLines = [];
+  function renderOLines() {
+    $("oLineList").innerHTML = draftOLines.map((l, i) =>
+      `<div class="item"><div><span class="nm">${esc(l.title)}</span>` +
+      `<div class="sub">${l.qty} × ${mm(calcUnit(l.list_price, l.discount))}${l.discount ? " (လျော့ " + l.discount + "%)" : ""}</div></div>` +
+      `<div class="amt">${mm(l.qty * calcUnit(l.list_price, l.discount))}</div>` +
+      `<button class="mini warn" data-oln="${i}">✕</button></div>`).join("") ||
+      `<div class="note">မရှိသေးပါ</div>`;
+    const bt = saleTotalCalc(draftOLines), fee = parseInt($("o_fee").value, 10) || 0;
+    $("oBooksTotal").textContent = mm(bt);
+    $("oFeeShow").textContent = mm(fee);
+    $("oGrand").textContent = mm(bt + fee);
+    $("oLineList").querySelectorAll("[data-oln]").forEach(x => x.onclick = () => {
+      draftOLines.splice(Number(x.dataset.oln), 1); renderOLines(); });
+  }
+  function autofillOrder(isbn) {
+    const b = findBookByIsbn(state, isbn) || findPastLine(state, isbn);
+    if (b) { $("ol_title").value = b.title; $("ol_price").value = b.list_price; toast("စာရင်းထဲက တွေ့တယ်"); }
+  }
+  $("ol_isbn").addEventListener("change", () => autofillOrder($("ol_isbn").value));
+  $("o_fee").addEventListener("input", renderOLines);
+  $("btnAddOLine").onclick = () => {
+    const title = $("ol_title").value.trim(), price = parseInt($("ol_price").value, 10),
+          qty = parseInt($("ol_qty").value, 10), disc = parseFloat($("ol_disc").value) || 0,
+          isbn = $("ol_isbn").value.trim();
+    if (!title) return toast("စာအုပ်အမည် ထည့်ပါ");
+    if (!price || price <= 0) return toast("မူရင်းဈေး ထည့်ပါ");
+    if (!qty || qty <= 0) return toast("အုပ်ရေ ထည့်ပါ");
+    const ex = draftOLines.find(l => isbn && l.isbn === isbn && l.discount === disc && l.list_price === price);
+    if (ex) ex.qty += qty;
+    else draftOLines.push({ isbn: isbn, title: title, qty: qty, list_price: price, discount: disc });
+    ["ol_isbn", "ol_title", "ol_price"].forEach(i => $(i).value = ""); $("ol_qty").value = 1; $("ol_disc").value = 0;
+    renderOLines(); toast("ထည့်ပြီး");
+  };
+  function renderOrders() {
+    $("orderCount").textContent = state.orders.length ? `(${state.orders.length} ခု)` : "";
+    $("orderList").innerHTML = state.orders.slice().reverse().map(o =>
+      `<div class="item"><div><span class="nm">${orderRef(o)}</span>` +
+      `<div class="sub">${o.created_at} • ${esc(o.customer)} • ${esc(o.delivery)} • ${esc(o.payment)} • ${o.lines.length} မျိုး${o.exported ? ' • <span class="ok">ထုတ်ပြီး</span>' : ""}</div></div>` +
+      `<div class="amt">${mm(o.total)}</div>` +
+      `<button class="mini warn" data-odel="${o.id}">✕</button></div>`).join("") ||
+      `<div class="note">မရှိသေးပါ</div>`;
+    $("orderList").querySelectorAll("[data-odel]").forEach(x => x.onclick = () => {
+      if (confirm("ဒီ Order မှတ်တမ်း ဖျက်မလား?")) {
+        state.orders = state.orders.filter(o => o.id !== x.dataset.odel); save(); renderOrders(); } });
+  }
+  $("btnSaveOrder").onclick = () => {
+    const customer = $("o_customer").value.trim();
+    if (!customer) return toast("ဝယ်သူ အမည် ထည့်ပါ");
+    if (!draftOLines.length) return toast("စာအုပ် အရင် ထည့်ပါ");
+    makeOrder(state, { customer: customer, phone: $("o_phone").value, address: $("o_address").value,
+      channel: $("o_channel").value, delivery: $("o_delivery").value, payment: $("o_payment").value,
+      fee: parseInt($("o_fee").value, 10) || 0, lines: draftOLines });
+    draftOLines = [];
+    ["o_customer", "o_phone", "o_address"].forEach(i => $(i).value = ""); $("o_fee").value = 0;
+    save(); renderOLines(); renderOrders(); toast("Order သိမ်းပြီး");
+  };
+
   /* export */
   function renderExport() {
     const p = pendingCounts(state);
-    $("exportSummary").innerHTML = p.bookTitles + p.saleCount === 0
+    const nothing = p.bookTitles + p.saleCount + p.orderCount === 0;
+    $("exportSummary").innerHTML = nothing
       ? "မပို့ရသေးတာ မရှိပါ။"
-      : `မပို့ရသေး — စာအုပ် <b>${p.bookTitles}</b> မျိုး (${p.bookCopies} အုပ်)၊ ဘောင်ချာ <b>${p.saleCount}</b> စောင် (${mm(p.saleTotal)} ကျပ်)`;
-    $("btnExport").disabled = p.bookTitles + p.saleCount === 0;
+      : `မပို့ရသေး — စာအုပ် <b>${p.bookTitles}</b> မျိုး (${p.bookCopies} အုပ်)၊ ဘောင်ချာ <b>${p.saleCount}</b> စောင် (${mm(p.saleTotal)} ကျပ်)၊ Order <b>${p.orderCount}</b> ခု (${mm(p.orderTotal)} ကျပ်)`;
+    $("btnExport").disabled = nothing;
+    $("btnExportAll").disabled = (state.books.length + state.sales.length + state.orders.length) === 0;
+    refreshChrome();
   }
-  $("btnExport").onclick = async () => {
-    const session = buildSession(state);
+  async function deliverSession(session) {
     const blob = new Blob([JSON.stringify(session, null, 1)], { type: "application/json" });
     const fname = "tlk-session-" + nowStr().replace(/[-: ]/g, "").slice(0, 12) + ".json";
     const file = new File([blob], fname, { type: "application/json" });
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try { await navigator.share({ files: [file], title: fname }); }
-      catch (e) { if (e && e.name === "AbortError") return; }
+      catch (e) { if (e && e.name === "AbortError") return false; }
     } else {
       const a = document.createElement("a");
       a.href = URL.createObjectURL(blob); a.download = fname; a.click();
       setTimeout(() => URL.revokeObjectURL(a.href), 4000);
     }
-    markAllExported(state); save(); renderBooks(); renderSales(); renderExport();
+    return true;
+  }
+  $("btnExport").onclick = async () => {
+    if (!await deliverSession(buildSession(state))) return;
+    markAllExported(state); save(); renderBooks(); renderSales(); renderOrders(); renderExport();
     toast("Session ဖိုင် ထုတ်ပြီး (ထုတ်ပြီး အဖြစ် မှတ်ထားတယ်)");
+  };
+  $("btnExportAll").onclick = async () => {
+    await deliverSession(buildSession(state, true));
+    toast("မှတ်တမ်း အကုန် ပြန် ထုတ်ပြီး (အမှတ်အသား မပြောင်းပါ)");
   };
   $("btnClearExported").onclick = () => {
     if (!confirm("ထုတ်ပြီးသားတွေ ရှင်းမလား?")) return;
-    clearExported(state); save(); renderBooks(); renderSales(); renderExport(); toast("ရှင်းပြီး");
+    clearExported(state); save(); renderBooks(); renderSales(); renderOrders(); renderExport(); toast("ရှင်းပြီး");
   };
   $("btnClearAll").onclick = () => {
     if (!confirm("မှတ်တမ်း အားလုံး ဖျက်မလား? PC မှာ မသွင်းရသေးရင် ပျက်မယ်!")) return;
-    state = emptyState(); save(); renderBooks(); renderSales(); renderLines(); renderExport(); toast("အကုန် ရှင်းပြီး");
+    state = emptyState(); draftLines = []; draftOLines = []; save(); renderBooks(); renderSales(); renderLines(); renderOLines(); renderOrders(); renderExport(); toast("အကုန် ရှင်းပြီး");
   };
 
   /* scanner */
@@ -464,6 +629,7 @@ if (typeof document !== "undefined") {
   function onCode(code) {
     stopScan();
     if (scanTarget === "book") { $("b_isbn").value = code; }
+    else if (scanTarget === "order") { $("ol_isbn").value = code; autofillOrder(code); }
     else { $("l_isbn").value = code; autofillSale(code); }
     toast("ISBN: " + code);
   }
@@ -493,9 +659,10 @@ if (typeof document !== "undefined") {
   }
   $("btnScanBook").onclick = () => startScan("book");
   $("btnScanSale").onclick = () => startScan("sale");
+  $("btnScanOrder").onclick = () => startScan("order");
   $("btnStopScan").onclick = stopScan;
 
-  renderBooks(); renderLines(); renderSales();
+  renderBooks(); renderLines(); renderSales(); renderOLines(); renderOrders();
   if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
 }
 </script>
