@@ -181,6 +181,7 @@
 </nav>
 <div class="toast" id="toast"></div>
 
+<script src="logo.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
 <script>
 "use strict";
@@ -267,7 +268,12 @@ function receiptHtml(sale) {
       (l.discount ? `<br/><span style="color:#666;">လျော့ ${l.discount}%</span>` : "") +
       `</td><td class="r">${l.qty} × ${mm(l.unit_price)}</td><td class="r">${mm(l.qty * l.unit_price)}</td></tr>`;
   });
-  return `<div class="hd"><div class="shop">${SHOP_NAME}</div>` +
+  const hasLogo = (typeof window !== "undefined" && window.LOGO_DATA) ||
+                  (typeof LOGO_DATA !== "undefined" && LOGO_DATA);
+  const head = hasLogo
+    ? `<div class="hd"><img src="${window.LOGO_DATA}" style="width:130px; max-width:65%;" alt=""/></div>`
+    : `<div class="hd"><div class="shop">${SHOP_NAME}</div></div>`;
+  return head + `<div class="hd">` +
     `<div>${SHOP_ADDR}</div><div>ဖုန်း: ${SHOP_PHONES}</div></div><hr/>` +
     `<table><tr><td>ဘောင်ချာ: ${receiptRef(sale)}</td><td class="r">${sale.created_at}</td></tr></table>` +
     (sale.customer ? `<div>ဝယ်သူ: ${esc(sale.customer)}</div>` : "") +
