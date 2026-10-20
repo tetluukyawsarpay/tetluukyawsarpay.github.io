@@ -91,6 +91,16 @@
     </div>
     <div class="card">
       <button class="scan" id="btnScanBook">📷 Barcode Scan (ISBN)</button>
+      <button class="alt big" id="btnPhotoBook" style="margin-top:8px;">📷 မျက်နှာဖုံး ဓါတ်ပုံ → AI ဖြည့်မည်</button>
+      <input type="file" id="aiPhoto" accept="image/*" capture="environment" style="display:none;"/>
+      <div id="aiStatus" class="note" style="margin-top:6px;"></div>
+      <details id="aiSettings" style="margin-top:6px;">
+        <summary style="font-size:14px; color:#0b5394;">🤖 AI Setting (API Key)</summary>
+        <label>Gemini API Key — ဒီဖုန်းထဲမှာပဲ သိမ်းတယ် (session ဖိုင်ထဲ မပါ၊ ဘယ်မှ မပို့)</label>
+        <input id="ai_key" type="password" placeholder="AIza..."/>
+        <button class="alt" id="btnSaveKey" style="margin-top:8px;">Key သိမ်းမည်</button>
+        <p class="note">Key မရှိသေးရင် aistudio.google.com → Get API key မှာ အခမဲ့ ရယူနိုင်တယ်။ Key ထည့်ထားမှ ဓါတ်ပုံ ခလုတ် အလုပ်လုပ်မယ်။ ဓါတ်ပုံ ဖတ်တာ internet လိုတယ်။</p>
+      </details>
       <label>ISBN</label>
       <input id="b_isbn" inputmode="numeric" placeholder="978..."/>
       <label>စာအုပ်အမည် *</label>
@@ -451,6 +461,90 @@ if (typeof document !== "undefined") {
     }
     save(); clearBookForm(); renderBooks();
   };
+
+  /* AI photo fill (Gemini) — key stays in this phone only */
+  const AI_KEY_LS = "tlk_gemini_key";
+  const AI_MODELS = ["gemini-2.5-flash", "gemini-2.0-flash", "gemini-flash-latest"];
+  function aiKey() { try { return localStorage.getItem(AI_KEY_LS) || ""; } catch (e) { return ""; } }
+  function aiStat(msg) { $("aiStatus").textContent = msg || ""; }
+  function aiInit() {
+    const k = aiKey();
+    if (k) { $("ai_key").value = k; aiStat("AI အသင့်ရှိ — မျက်နှာဖုံး ဓါတ်ပုံ ရိုက်လို့ ရပြီ ✓"); }
+    else aiStat("AI သုံးရန် အရင် Key ထည့်ပါ (အောက်က AI Setting မှာ)");
+  }
+  $("btnSaveKey").onclick = () => {
+    const k = $("ai_key").value.trim();
+    try { if (k) localStorage.setItem(AI_KEY_LS, k); else localStorage.removeItem(AI_KEY_LS); }
+    catch (e) {}
+    toast(k ? "Key သိမ်းပြီး" : "Key ဖျက်ပြီး");
+    aiInit();
+  };
+  $("btnPhotoBook").onclick = () => {
+    if (!aiKey()) { $("aiSettings").open = true; toast("အရင် AI Setting မှာ Key ထည့်ပါ"); window.scrollTo(0, 0); return; }
+    $("aiPhoto").click();
+  };
+  $("aiPhoto").addEventListener("change", ev => {
+    const f = ev.target.files && ev.target.files[0];
+    ev.target.value = "";
+    if (f) aiFillFromPhoto(f);
+  });
+  function shrinkImage(file, maxDim, q) {
+    return new Promise((resolve, reject) => {
+      const url = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const scale = Math.min(1, maxDim / Math.max(img.width, img.height));
+          const c = document.createElement("canvas");
+          c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
+          c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+          URL.revokeObjectURL(url);
+          resolve(c.toDataURL("image/jpeg", q).split(",")[1]);
+        } catch (err) { reject(err); }
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); reject(new Error("ပုံ ဖတ်မရ")); };
+      img.src = url;
+    });
+  }
+  async function aiFillFromPhoto(file) {
+    const key = aiKey();
+    if (!key) return toast("Key အရင် ထည့်ပါ");
+    const btn = $("btnPhotoBook");
+    btn.disabled = true; aiStat("AI ဖတ်နေသည်… ခဏ စောင့်ပါ");
+    try {
+      const b64 = await shrinkImage(file, 1280, 0.82);
+      const prompt = "You are reading the front cover of a book (usually Myanmar/Burmese). Extract the title exactly as printed on the cover, the author exactly as printed, and the publisher only if clearly printed on the cover (otherwise empty string). Reply with ONLY a JSON object: {\"title\": \"...\", \"author\": \"...\", \"publisher\": \"...\"}. Use empty string for anything you cannot read. Do not translate or rewrite; keep the text as printed.";
+      let lastErr = null, obj = null;
+      for (const model of AI_MODELS) {
+        const res = await fetch("https://generativelanguage.googleapis.com/v1beta/models/" +
+          model + ":generateContent?key=" + encodeURIComponent(key), {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ contents: [{ parts: [{ text: prompt },
+            { inline_data: { mime_type: "image/jpeg", data: b64 } }] }],
+            generationConfig: { responseMimeType: "application/json", temperature: 0.1 } }) });
+        const data = await res.json().catch(() => null);
+        if (!res.ok) {
+          lastErr = new Error((data && data.error && data.error.message) || ("HTTP " + res.status));
+          if (res.status === 404) continue;
+          throw lastErr;
+        }
+        const txt = (data.candidates && data.candidates[0] && data.candidates[0].content &&
+          data.candidates[0].content.parts || []).map(p => p.text || "").join("");
+        obj = JSON.parse(txt);
+        break;
+      }
+      if (!obj) throw lastErr || new Error("AI အဖြေ မရ");
+      if (obj.title) $("b_title").value = String(obj.title).trim();
+      if (obj.author) $("b_author").value = String(obj.author).trim();
+      if (obj.publisher) $("b_publisher").value = String(obj.publisher).trim();
+      aiStat("AI ဖြည့်ပေးပြီး ✓ — စာသား မှန်/မမှန် စစ်ပြီး ပြင်စရာရှိရင် ပြင်၊ ပြီးမှ «သိမ်းမည်» နှိပ်ပါ");
+      toast("AI ဖြည့်ပြီး — စစ်ပါ");
+    } catch (e) {
+      aiStat("AI မရပါ: " + (e && e.message ? e.message : e) + " — လက်နဲ့ ရိုက်ထည့်ပါ");
+      toast("AI မရပါ");
+    } finally { btn.disabled = false; }
+  }
+  aiInit();
 
   /* sale */
   function renderLines() {
