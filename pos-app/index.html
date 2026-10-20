@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
+<title>TLK ဖုန်း မှတ်တမ်း</title>
+<link rel="manifest" href="manifest.webmanifest"/>
+<meta name="theme-color" content="#0b5394"/>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: "Myanmar Text", "Noto Sans Myanmar", sans-serif; margin: 0;
+         background: #f2f5f9; color: #17222e; padding-bottom: 76px; }
+  header { background: #0b5394; color: #fff; padding: 12px 16px; position: sticky; top: 0; z-index: 5; }
+  header .t { font-size: 19px; font-weight: bold; }
+  header .s { font-size: 12.5px; opacity: .85; }
+  main { padding: 12px; max-width: 640px; margin: 0 auto; }
+  section { display: none; }
+  section.on { display: block; }
+  .card { background: #fff; border-radius: 12px; padding: 12px; margin-bottom: 12px;
+          box-shadow: 0 1px 3px rgba(10,40,80,.12); }
+  label { display: block; font-size: 13px; color: #446; margin: 8px 0 3px; }
+  input, select { width: 100%; padding: 10px; font-size: 16px; border: 1px solid #b9c6d4;
+                  border-radius: 8px; font-family: inherit; background: #fff; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+  button { font-family: inherit; font-size: 16px; border: 0; border-radius: 9px;
+           padding: 12px 14px; background: #0b5394; color: #fff; cursor: pointer; }
+  button.alt { background: #e7eef5; color: #0b5394; }
+  button.warn { background: #b03a2e; }
+  button.big { width: 100%; padding: 14px; font-size: 17px; font-weight: bold; }
+  button:disabled { opacity: .45; }
+  .scan { width: 100%; background: #148f5a; font-weight: bold; }
+  .item { display: flex; justify-content: space-between; gap: 8px; padding: 9px 4px;
+          border-bottom: 1px solid #e4ebf2; align-items: baseline; }
+  .item:last-child { border-bottom: 0; }
+  .item .nm { font-weight: 600; }
+  .item .sub { font-size: 12.5px; color: #567; }
+  .item .amt { white-space: nowrap; font-weight: 600; }
+  .mini { font-size: 13px; padding: 6px 10px; border-radius: 7px; }
+  .total { text-align: right; font-size: 19px; font-weight: bold; padding: 8px 2px; }
+  .chips { display: flex; gap: 8px; margin-top: 6px; }
+  .chips button { flex: 1; background: #e7eef5; color: #0b5394; padding: 8px; font-size: 14px; }
+  .chips button.sel { background: #0b5394; color: #fff; }
+  nav { position: fixed; left: 0; right: 0; bottom: 0; background: #fff; z-index: 5;
+        display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid #cfdae6; }
+  nav button { background: none; color: #456; border-radius: 0; padding: 13px 4px; font-size: 15.5px; }
+  nav button.on { color: #0b5394; font-weight: bold; box-shadow: inset 0 3px 0 #0b5394; }
+  .note { font-size: 13px; color: #567; line-height: 1.55; }
+  .ok { color: #148f5a; font-weight: 600; }
+  #scannerWrap { display: none; margin-bottom: 12px; }
+  #scannerWrap video { width: 100%; border-radius: 12px; background: #000; }
+  #receiptView { display: none; }
+  .rc { background: #fff; border-radius: 10px; padding: 16px 14px; max-width: 360px; margin: 0 auto;
+        box-shadow: 0 1px 4px rgba(10,40,80,.15); font-size: 14px; }
+  .rc .hd { text-align: center; }
+  .rc .shop { font-size: 19px; font-weight: bold; }
+  .rc table { width: 100%; border-collapse: collapse; margin-top: 8px; }
+  .rc td { padding: 3px 2px; vertical-align: top; }
+  .rc .r { text-align: right; white-space: nowrap; }
+  .rc hr { border: 0; border-top: 1px dashed #999; }
+  .toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: 88px; z-index: 9;
+           background: #17222e; color: #fff; padding: 10px 16px; border-radius: 20px;
+           font-size: 14.5px; display: none; max-width: 88vw; text-align: center; }
+  @media print {
+    body { padding: 0; background: #fff; }
+    header, main, nav, .toast { display: none !important; }
+    #receiptView { display: block !important; }
+    .rc { box-shadow: none; max-width: none; }
+    .noprint { display: none !important; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="t">တက်လူကျော် — ဖုန်း မှတ်တမ်း</div>
+  <div class="s">မီးပျက်ချိန် မှတ်တမ်း • data အားလုံး ဒီဖုန်းထဲမှာပဲ ရှိတယ်</div>
+</header>
+
+<main>
+  <!-- ============ BOOKS ============ -->
+  <section id="sec-books" class="on">
+    <div id="scannerWrap" class="card">
+      <video id="scanVideo" playsinline muted></video>
+      <button class="alt big" id="btnStopScan" style="margin-top:8px;">Scan ပိတ်မည်</button>
+    </div>
+    <div class="card">
+      <button class="scan" id="btnScanBook">📷 Barcode Scan (ISBN)</button>
+      <label>ISBN</label>
+      <input id="b_isbn" inputmode="numeric" placeholder="978..."/>
+      <label>စာအုပ်အမည် *</label>
+      <input id="b_title"/>
+      <div class="row2">
+        <div><label>စာရေးသူ</label><input id="b_author"/></div>
+        <div><label>ထုတ်ဝေသည့်တိုက်</label><input id="b_publisher"/></div>
+      </div>
+      <label>အမျိုးအစား</label>
+      <input id="b_category"/>
+      <div class="row3">
+        <div><label>မူရင်းဈေး *</label><input id="b_price" inputmode="numeric"/></div>
+        <div><label>ဝယ် လျော့%</label><input id="b_disc" inputmode="decimal"/></div>
+        <div><label>အုပ်ရေ *</label><input id="b_qty" inputmode="numeric" value="1"/></div>
+      </div>
+      <button class="big" id="btnAddBook" style="margin-top:12px;">သိမ်းမည်</button>
+    </div>
+    <div class="card">
+      <div style="font-weight:bold;">သွင်းထားသော စာအုပ်များ <span id="bookCount"></span></div>
+      <div id="bookList"></div>
+      <div class="note">ISBN တူတာ ထပ်သွင်းရင် အုပ်ရေ ပေါင်းပေးတယ်။ ပြင်ချင်ရင် စာရင်းထဲက တစ်အုပ်ကို နှိပ်ပါ။</div>
+    </div>
+  </section>
+
+  <!-- ============ SALE ============ -->
+  <section id="sec-sale">
+    <div id="saleMain">
+      <div class="card">
+        <label>ဝယ်သူ အမည် (မလိုလည်း ရ)</label>
+        <input id="s_customer"/>
+      </div>
+      <div class="card">
+        <button class="scan" id="btnScanSale">📷 Barcode Scan (ISBN)</button>
+        <label>ISBN</label>
+        <input id="l_isbn" inputmode="numeric" placeholder="978..."/>
+        <label>စာအုပ်အမည် *</label>
+        <input id="l_title"/>
+        <div class="row3">
+          <div><label>မူရင်းဈေး *</label><input id="l_price" inputmode="numeric"/></div>
+          <div><label>အုပ်ရေ *</label><input id="l_qty" inputmode="numeric" value="1"/></div>
+          <div><label>လျော့ %</label><input id="l_disc" inputmode="decimal" value="0"/></div>
+        </div>
+        <div class="chips">
+          <button data-d="0">လျော့ 0%</button>
+          <button data-d="10">လျော့ 10%</button>
+          <button data-d="20">လျော့ 20%</button>
+        </div>
+        <button class="big" id="btnAddLine" style="margin-top:12px;">စာရင်းထဲ ထည့်မည်</button>
+      </div>
+      <div class="card">
+        <div style="font-weight:bold;">ဒီဘောင်ချာထဲက စာအုပ်များ</div>
+        <div id="lineList"></div>
+        <div class="total">စုစုပေါင်း: <span id="saleTotal">0</span> ကျပ်</div>
+        <button class="big" id="btnSaveSale">ဘောင်ချာ သိမ်းမည်</button>
+      </div>
+      <div class="card">
+        <div style="font-weight:bold;">သိမ်းထားသော ဘောင်ချာများ <span id="saleCount"></span></div>
+        <div id="saleList"></div>
+        <div class="note">ဘောင်ချာကို နှိပ်ရင် ပြန်ကြည့်/PDF ထုတ်လို့ ရတယ်။</div>
+      </div>
+    </div>
+    <div id="receiptView">
+      <div class="rc" id="receiptBox"></div>
+      <div style="display:flex; gap:10px; margin-top:12px;" class="noprint">
+        <button id="btnPrintRc" style="flex:1;">PDF / Print ထုတ်မည်</button>
+        <button id="btnCloseRc" class="alt" style="flex:1;">ပိတ်မည်</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ EXPORT ============ -->
+  <section id="sec-export">
+    <div class="card">
+      <div style="font-weight:bold;">PC သို့ ပို့ရန်</div>
+      <p class="note" id="exportSummary"></p>
+      <button class="big" id="btnExport">Session ဖိုင် ထုတ်မည် (.json)</button>
+      <p class="note">ဖိုင် ထွက်လာရင် Telegram/USB နဲ့ PC ဆီ ပို့ပြီး POS ထဲက
+        <b>“ဖုန်း Session သွင်းမည်”</b> နဲ့ သွင်းပါ။ တစ်ဖိုင်တည်း နှစ်ခါ သွင်းမိလည်း
+        နှစ်ခါ မဝင်အောင် ID နဲ့ စစ်ထားတယ်။</p>
+    </div>
+    <div class="card">
+      <div style="font-weight:bold;">ရှင်းလင်းရန်</div>
+      <p class="note">PC မှာ သွင်းပြီး ကြောင်း သေချာမှ ရှင်းပါ။ မသွင်းရသေးတာတွေ ပျက်သွားမယ်။</p>
+      <button class="alt big" id="btnClearExported">ထုတ်ပြီးသားတွေ ရှင်းမည်</button>
+      <button class="warn big" id="btnClearAll" style="margin-top:10px;">အကုန် ရှင်းမည်</button>
+    </div>
+  </section>
+</main>
+
+<nav>
+  <button id="tab-books" class="on">📚 စာအုပ်သွင်း</button>
+  <button id="tab-sale">🧾 အရောင်း</button>
+  <button id="tab-export">📤 Export</button>
+</nav>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"></script>
+<script>
+"use strict";
+/* ===== CORE (DOM-free) ===== */
+const LS_KEY = "tlk_phone_v1";
+const SHOP_NAME = "တက်လူကျော်စာပေ";
+const SHOP_ADDR = "ရန်ကုန်၊ ကမာရွတ်၊ (၃) ရပ်ကွက်၊ လှည်းတန်း (၂) လမ်း၊ အမှတ် ၁၆အေ (မြေညီထပ်) (လှည်းတန်းဈေး အနီး)";
+const SHOP_PHONES = "09 259 289 159၊ 09 250 41 64 64";
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 8); }
+function pad2(n) { return String(n).padStart(2, "0"); }
+function nowStr(d) { d = d || new Date();
+  return d.getFullYear() + "-" + pad2(d.getMonth() + 1) + "-" + pad2(d.getDate()) +
+         " " + pad2(d.getHours()) + ":" + pad2(d.getMinutes()); }
+function mm(n) { return Number(n || 0).toLocaleString("en-US"); }
+function calcUnit(list, disc) { return Math.round((Number(list) || 0) * (1 - (parseFloat(disc) || 0) / 100)); }
+function emptyState() { return { books: [], sales: [] }; }
+function loadState() {
+  try { const s = JSON.parse(localStorage.getItem(LS_KEY));
+        if (s && Array.isArray(s.books) && Array.isArray(s.sales)) return s; } catch (e) {}
+  return emptyState();
+}
+function addBook(st, data) {
+  const isbn = (data.isbn || "").trim();
+  if (isbn) {
+    const ex = st.books.find(b => b.isbn === isbn);
+    if (ex) { ex.qty += data.qty; ex.exported = false; return "merged"; }
+  }
+  st.books.push({ id: uid(), isbn: isbn, title: data.title, author: data.author || "",
+    publisher: data.publisher || "", category: data.category || "",
+    list_price: data.list_price, buy_discount: data.buy_discount || 0,
+    qty: data.qty, created_at: nowStr(), exported: false });
+  return "added";
+}
+function findBookByIsbn(st, isbn) {
+  isbn = (isbn || "").trim();
+  return st.books.find(b => b.isbn === isbn) || null;
+}
+function findPastLine(st, isbn) {
+  isbn = (isbn || "").trim();
+  for (let i = st.sales.length - 1; i >= 0; i--) {
+    const l = st.sales[i].lines.find(x => x.isbn === isbn);
+    if (l) return l;
+  }
+  return null;
+}
+function saleTotalCalc(lines) {
+  return lines.reduce((a, l) => a + l.qty * calcUnit(l.list_price, l.discount), 0);
+}
+function makeSale(st, customer, lines) {
+  const sale = { id: uid(), customer: (customer || "").trim(), created_at: nowStr(),
+    lines: lines.map(l => ({ isbn: l.isbn || "", title: l.title, qty: l.qty,
+      list_price: l.list_price, discount: l.discount || 0,
+      unit_price: calcUnit(l.list_price, l.discount) })), exported: false };
+  sale.total = sale.lines.reduce((a, l) => a + l.qty * l.unit_price, 0);
+  st.sales.push(sale);
+  return sale;
+}
+function buildSession(st) {
+  return { app: "tlk-phone", version: 1, exported_at: nowStr(),
+    books: st.books.filter(b => !b.exported).map(b => ({ id: b.id, isbn: b.isbn,
+      title: b.title, author: b.author, publisher: b.publisher, category: b.category,
+      list_price: b.list_price, buy_discount: b.buy_discount, qty: b.qty,
+      created_at: b.created_at })),
+    sales: st.sales.filter(s => !s.exported).map(s => ({ id: s.id, customer: s.customer,
+      created_at: s.created_at, total: s.total,
+      lines: s.lines.map(l => ({ isbn: l.isbn, title: l.title, qty: l.qty,
+        list_price: l.list_price, discount: l.discount, unit_price: l.unit_price })) })) };
+}
+function markAllExported(st) { st.books.forEach(b => b.exported = true); st.sales.forEach(s => s.exported = true); }
+function clearExported(st) { st.books = st.books.filter(b => !b.exported); st.sales = st.sales.filter(s => !s.exported); }
+function pendingCounts(st) {
+  const b = st.books.filter(x => !x.exported), s = st.sales.filter(x => !x.exported);
+  return { bookTitles: b.length, bookCopies: b.reduce((a, x) => a + x.qty, 0),
+           saleCount: s.length, saleTotal: s.reduce((a, x) => a + x.total, 0) };
+}
+function receiptRef(sale) { return "PH-" + sale.id.slice(-6).toUpperCase(); }
+function esc(t) { return String(t == null ? "" : t).replace(/[&<>"']/g,
+  c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c])); }
+function receiptHtml(sale) {
+  let rows = "";
+  sale.lines.forEach((l, i) => {
+    rows += `<tr><td>${i + 1}</td><td>${esc(l.title)}` +
+      (l.discount ? `<br/><span style="color:#666;">လျော့ ${l.discount}%</span>` : "") +
+      `</td><td class="r">${l.qty} × ${mm(l.unit_price)}</td><td class="r">${mm(l.qty * l.unit_price)}</td></tr>`;
+  });
+  return `<div class="hd"><div class="shop">${SHOP_NAME}</div>` +
+    `<div>${SHOP_ADDR}</div><div>ဖုန်း: ${SHOP_PHONES}</div></div><hr/>` +
+    `<table><tr><td>ဘောင်ချာ: ${receiptRef(sale)}</td><td class="r">${sale.created_at}</td></tr></table>` +
+    (sale.customer ? `<div>ဝယ်သူ: ${esc(sale.customer)}</div>` : "") +
+    `<table>${rows}</table><hr/>` +
+    `<table><tr><td><b>စုစုပေါင်း</b></td><td class="r"><b>${mm(sale.total)} ကျပ်</b></td></tr></table>` +
+    `<div class="hd" style="margin-top:8px;">ဝယ်ယူအားပေးမှု အတွက် ကျေးဇူးတင်ပါသည်။</div>`;
+}
+/* ===== UI ===== */
+let state = (typeof localStorage !== "undefined") ? loadState() : emptyState();
+let draftLines = [], editingBookId = null, scanTarget = "book", scanStream = null, scanTimer = null, zxReader = null;
+
+if (typeof document !== "undefined") {
+  const $ = id => document.getElementById(id);
+  const main = document.querySelector("main");
+  main.insertBefore($("scannerWrap"), main.firstChild);
+  function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch (e) {} }
+  function toast(msg) { const t = $("toast"); t.textContent = msg; t.style.display = "block";
+    clearTimeout(t._h); t._h = setTimeout(() => t.style.display = "none", 2400); }
+
+  /* tabs */
+  function showTab(name) {
+    stopScan();
+    ["books", "sale", "export"].forEach(n => {
+      $("sec-" + n).classList.toggle("on", n === name);
+      $("tab-" + n).classList.toggle("on", n === name);
+    });
+    if (name === "export") renderExport();
+    window.scrollTo(0, 0);
+  }
+  $("tab-books").onclick = () => showTab("books");
+  $("tab-sale").onclick = () => showTab("sale");
+  $("tab-export").onclick = () => showTab("export");
+
+  /* books */
+  function renderBooks() {
+    const el = $("bookList");
+    const copies = state.books.reduce((a, b) => a + b.qty, 0);
+    $("bookCount").textContent = state.books.length ? `(${state.books.length} မျိုး၊ ${copies} အုပ်)` : "";
+    el.innerHTML = state.books.map(b =>
+      `<div class="item"><div><span class="nm">${esc(b.title)}</span>` +
+      `<div class="sub">${esc(b.author || "")} ${b.publisher ? "• " + esc(b.publisher) : ""} • ${mm(b.list_price)} ကျပ်${b.exported ? ' • <span class="ok">ထုတ်ပြီး</span>' : ""}</div></div>` +
+      `<div class="amt">× ${b.qty}</div>` +
+      `<button class="mini alt" data-edit="${b.id}">ပြင်</button>` +
+      `<button class="mini warn" data-del="${b.id}">✕</button></div>`).join("") ||
+      `<div class="note">မရှိသေးပါ</div>`;
+    el.querySelectorAll("[data-del]").forEach(x => x.onclick = () => {
+      if (confirm("ဒီစာအုပ် မှတ်တမ်း ဖျက်မလား?")) {
+        state.books = state.books.filter(b => b.id !== x.dataset.del); save(); renderBooks(); } });
+    el.querySelectorAll("[data-edit]").forEach(x => x.onclick = () => editBook(x.dataset.edit));
+  }
+  function editBook(id) {
+    const b = state.books.find(x => x.id === id); if (!b) return;
+    editingBookId = id;
+    $("b_isbn").value = b.isbn; $("b_title").value = b.title; $("b_author").value = b.author;
+    $("b_publisher").value = b.publisher; $("b_category").value = b.category;
+    $("b_price").value = b.list_price; $("b_disc").value = b.buy_discount || ""; $("b_qty").value = b.qty;
+    $("btnAddBook").textContent = "ပြင်ပြီး သိမ်းမည်";
+    window.scrollTo(0, 0); toast("ပြင်ရန် အဆင်သင့်");
+  }
+  function clearBookForm() {
+    ["b_isbn", "b_title", "b_author", "b_publisher", "b_category", "b_price", "b_disc"].forEach(i => $(i).value = "");
+    $("b_qty").value = 1; editingBookId = null; $("btnAddBook").textContent = "သိမ်းမည်";
+  }
+  $("btnAddBook").onclick = () => {
+    const title = $("b_title").value.trim(), price = parseInt($("b_price").value, 10),
+          qty = parseInt($("b_qty").value, 10);
+    if (!title) return toast("စာအုပ်အမည် ထည့်ပါ");
+    if (!price || price <= 0) return toast("မူရင်းဈေး ထည့်ပါ");
+    if (!qty || qty <= 0) return toast("အုပ်ရေ ထည့်ပါ");
+    const data = { isbn: $("b_isbn").value, title: title, author: $("b_author").value.trim(),
+      publisher: $("b_publisher").value.trim(), category: $("b_category").value.trim(),
+      list_price: price, buy_discount: parseFloat($("b_disc").value) || 0, qty: qty };
+    if (editingBookId) {
+      const b = state.books.find(x => x.id === editingBookId);
+      if (b) Object.assign(b, data, { exported: false });
+      toast("ပြင်ပြီး");
+    } else {
+      toast(addBook(state, data) === "merged" ? "ISBN တူလို့ အုပ်ရေ ပေါင်းထည့်ပြီး" : "သိမ်းပြီး");
+    }
+    save(); clearBookForm(); renderBooks();
+  };
+
+  /* sale */
+  function renderLines() {
+    $("lineList").innerHTML = draftLines.map((l, i) =>
+      `<div class="item"><div><span class="nm">${esc(l.title)}</span>` +
+      `<div class="sub">${l.qty} × ${mm(calcUnit(l.list_price, l.discount))}${l.discount ? " (လျော့ " + l.discount + "%)" : ""}</div></div>` +
+      `<div class="amt">${mm(l.qty * calcUnit(l.list_price, l.discount))}</div>` +
+      `<button class="mini warn" data-ln="${i}">✕</button></div>`).join("") ||
+      `<div class="note">မရှိသေးပါ</div>`;
+    $("saleTotal").textContent = mm(saleTotalCalc(draftLines));
+    $("lineList").querySelectorAll("[data-ln]").forEach(x => x.onclick = () => {
+      draftLines.splice(Number(x.dataset.ln), 1); renderLines(); });
+  }
+  function autofillSale(isbn) {
+    const b = findBookByIsbn(state, isbn) || findPastLine(state, isbn);
+    if (b) { $("l_title").value = b.title; $("l_price").value = b.list_price; toast("စာရင်းထဲက တွေ့တယ်"); }
+  }
+  $("l_isbn").addEventListener("change", () => autofillSale($("l_isbn").value));
+  document.querySelectorAll(".chips button").forEach(c => c.onclick = () => {
+    $("l_disc").value = c.dataset.d;
+    document.querySelectorAll(".chips button").forEach(x => x.classList.toggle("sel", x === c));
+  });
+  $("btnAddLine").onclick = () => {
+    const title = $("l_title").value.trim(), price = parseInt($("l_price").value, 10),
+          qty = parseInt($("l_qty").value, 10), disc = parseFloat($("l_disc").value) || 0,
+          isbn = $("l_isbn").value.trim();
+    if (!title) return toast("စာအုပ်အမည် ထည့်ပါ");
+    if (!price || price <= 0) return toast("မူရင်းဈေး ထည့်ပါ");
+    if (!qty || qty <= 0) return toast("အုပ်ရေ ထည့်ပါ");
+    const ex = draftLines.find(l => isbn && l.isbn === isbn && l.discount === disc && l.list_price === price);
+    if (ex) ex.qty += qty;
+    else draftLines.push({ isbn: isbn, title: title, qty: qty, list_price: price, discount: disc });
+    ["l_isbn", "l_title", "l_price"].forEach(i => $(i).value = ""); $("l_qty").value = 1; $("l_disc").value = 0;
+    document.querySelectorAll(".chips button").forEach(x => x.classList.remove("sel"));
+    renderLines(); toast("ထည့်ပြီး");
+  };
+  function renderSales() {
+    $("saleCount").textContent = state.sales.length ? `(${state.sales.length} စောင်)` : "";
+    $("saleList").innerHTML = state.sales.slice().reverse().map(s =>
+      `<div class="item"><div><span class="nm">${receiptRef(s)}</span>` +
+      `<div class="sub">${s.created_at}${s.customer ? " • " + esc(s.customer) : ""} • ${s.lines.length} မျိုး${s.exported ? ' • <span class="ok">ထုတ်ပြီး</span>' : ""}</div></div>` +
+      `<div class="amt">${mm(s.total)}</div>` +
+      `<button class="mini alt" data-view="${s.id}">ကြည့်</button>` +
+      `<button class="mini warn" data-sdel="${s.id}">✕</button></div>`).join("") ||
+      `<div class="note">မရှိသေးပါ</div>`;
+    $("saleList").querySelectorAll("[data-view]").forEach(x => x.onclick = () => showReceipt(x.dataset.view));
+    $("saleList").querySelectorAll("[data-sdel]").forEach(x => x.onclick = () => {
+      if (confirm("ဒီဘောင်ချာ မှတ်တမ်း ဖျက်မလား?")) {
+        state.sales = state.sales.filter(s => s.id !== x.dataset.sdel); save(); renderSales(); } });
+  }
+  $("btnSaveSale").onclick = () => {
+    if (!draftLines.length) return toast("စာအုပ် အရင် ထည့်ပါ");
+    const sale = makeSale(state, $("s_customer").value, draftLines);
+    draftLines = []; $("s_customer").value = "";
+    save(); renderLines(); renderSales();
+    showReceipt(sale.id); toast("ဘောင်ချာ သိမ်းပြီး");
+  };
+  function showReceipt(id) {
+    const s = state.sales.find(x => x.id === id); if (!s) return;
+    $("receiptBox").innerHTML = receiptHtml(s);
+    $("saleMain").style.display = "none"; $("receiptView").style.display = "block";
+    window.scrollTo(0, 0);
+  }
+  $("btnCloseRc").onclick = () => { $("receiptView").style.display = "none"; $("saleMain").style.display = "block"; };
+  $("btnPrintRc").onclick = () => window.print();
+
+  /* export */
+  function renderExport() {
+    const p = pendingCounts(state);
+    $("exportSummary").innerHTML = p.bookTitles + p.saleCount === 0
+      ? "မပို့ရသေးတာ မရှိပါ။"
+      : `မပို့ရသေး — စာအုပ် <b>${p.bookTitles}</b> မျိုး (${p.bookCopies} အုပ်)၊ ဘောင်ချာ <b>${p.saleCount}</b> စောင် (${mm(p.saleTotal)} ကျပ်)`;
+    $("btnExport").disabled = p.bookTitles + p.saleCount === 0;
+  }
+  $("btnExport").onclick = async () => {
+    const session = buildSession(state);
+    const blob = new Blob([JSON.stringify(session, null, 1)], { type: "application/json" });
+    const fname = "tlk-session-" + nowStr().replace(/[-: ]/g, "").slice(0, 12) + ".json";
+    const file = new File([blob], fname, { type: "application/json" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], title: fname }); }
+      catch (e) { if (e && e.name === "AbortError") return; }
+    } else {
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob); a.download = fname; a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    }
+    markAllExported(state); save(); renderBooks(); renderSales(); renderExport();
+    toast("Session ဖိုင် ထုတ်ပြီး (ထုတ်ပြီး အဖြစ် မှတ်ထားတယ်)");
+  };
+  $("btnClearExported").onclick = () => {
+    if (!confirm("ထုတ်ပြီးသားတွေ ရှင်းမလား?")) return;
+    clearExported(state); save(); renderBooks(); renderSales(); renderExport(); toast("ရှင်းပြီး");
+  };
+  $("btnClearAll").onclick = () => {
+    if (!confirm("မှတ်တမ်း အားလုံး ဖျက်မလား? PC မှာ မသွင်းရသေးရင် ပျက်မယ်!")) return;
+    state = emptyState(); save(); renderBooks(); renderSales(); renderLines(); renderExport(); toast("အကုန် ရှင်းပြီး");
+  };
+
+  /* scanner */
+  function stopScan() {
+    if (scanTimer) { clearInterval(scanTimer); scanTimer = null; }
+    if (zxReader) { try { zxReader.reset(); } catch (e) {} zxReader = null; }
+    if (scanStream) { scanStream.getTracks().forEach(t => t.stop()); scanStream = null; }
+    $("scannerWrap").style.display = "none";
+  }
+  function onCode(code) {
+    stopScan();
+    if (scanTarget === "book") { $("b_isbn").value = code; }
+    else { $("l_isbn").value = code; autofillSale(code); }
+    toast("ISBN: " + code);
+  }
+  async function startScan(target) {
+    scanTarget = target;
+    const video = $("scanVideo");
+    $("scannerWrap").style.display = "block";
+    window.scrollTo(0, 0);
+    try {
+      scanStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+      video.srcObject = scanStream; await video.play();
+    } catch (e) { toast("ကင်မရာ ဖွင့်မရပါ — ISBN လက်နဲ့ ရိုက်ပါ"); stopScan(); return; }
+    if ("BarcodeDetector" in window) {
+      try {
+        const det = new BarcodeDetector({ formats: ["ean_13", "ean_8", "upc_a", "upc_e", "code_128", "code_39"] });
+        scanTimer = setInterval(async () => {
+          try { const codes = await det.detect(video);
+                if (codes && codes.length) onCode(codes[0].rawValue); } catch (e) {}
+        }, 350);
+      } catch (e) { toast("Scan မရပါ — လက်နဲ့ ရိုက်ပါ"); stopScan(); }
+    } else if (window.ZXing) {
+      try {
+        zxReader = new ZXing.BrowserMultiFormatReader();
+        zxReader.decodeFromVideoDevice(null, video, (res) => { if (res) onCode(res.getText()); });
+      } catch (e) { toast("Scan မရပါ — လက်နဲ့ ရိုက်ပါ"); stopScan(); }
+    } else { toast("ဒီ browser မှာ scan မရပါ — ISBN လက်နဲ့ ရိုက်ပါ"); stopScan(); }
+  }
+  $("btnScanBook").onclick = () => startScan("book");
+  $("btnScanSale").onclick = () => startScan("sale");
+  $("btnStopScan").onclick = stopScan;
+
+  renderBooks(); renderLines(); renderSales();
+  if ("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+</script>
+</body>
+</html>
