@@ -239,6 +239,7 @@
       <p class="note" id="exportSummary"></p>
       <button class="big" id="btnExport">Session ဖိုင် ထုတ်မည် (.json)</button>
       <button class="big alt" id="btnExportAll" style="margin-top:10px;">အကုန် ပြန် ထုတ်မည် (ထုတ်ပြီးသား အပါအဝင်)</button>
+      <button class="big alt" id="btnDownloadAll" style="margin-top:10px;">⬇️ အကုန် Download ပဲ ဆွဲမည် (Downloads folder ထဲ ဆင်းမယ်)</button>
       <p class="note">ပို့ထားတဲ့ ဖိုင် ပျောက်သွားရင် ဒီခလုတ်နဲ့ မှတ်တမ်း အကုန် ပြန် ထုတ်လို့ ရတယ်။ (ထုတ်ပြီး အမှတ်အသားတွေ မပြောင်းဘူး။)</p>
       <p class="note">ဖိုင် ထွက်လာရင် Telegram/USB နဲ့ PC ဆီ ပို့ပြီး POS ထဲက
         <b>“ဖုန်း Session သွင်းမည်”</b> နဲ့ သွင်းပါ။ တစ်ဖိုင်တည်း နှစ်ခါ သွင်းမိလည်း
@@ -712,31 +713,47 @@ if (typeof document !== "undefined") {
       ? "မပို့ရသေးတာ မရှိပါ။"
       : `မပို့ရသေး — စာအုပ် <b>${p.bookTitles}</b> မျိုး (${p.bookCopies} အုပ်)၊ ဘောင်ချာ <b>${p.saleCount}</b> စောင် (${mm(p.saleTotal)} ကျပ်)၊ Order <b>${p.orderCount}</b> ခု (${mm(p.orderTotal)} ကျပ်)`;
     $("btnExport").disabled = nothing;
-    $("btnExportAll").disabled = (state.books.length + state.sales.length + state.orders.length) === 0;
+    $("btnExportAll").disabled = $("btnDownloadAll").disabled = (state.books.length + state.sales.length + state.orders.length) === 0;
     refreshChrome();
   }
-  async function deliverSession(session) {
+  async function deliverSession(session, forceDownload) {
     const blob = new Blob([JSON.stringify(session, null, 1)], { type: "application/json" });
     const fname = "tlk-session-" + nowStr().replace(/[-: ]/g, "").slice(0, 12) + ".json";
-    const file = new File([blob], fname, { type: "application/json" });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try { await navigator.share({ files: [file], title: fname }); }
-      catch (e) { if (e && e.name === "AbortError") return false; }
-    } else {
+    const doDownload = () => {
       const a = document.createElement("a");
-      a.href = URL.createObjectURL(blob); a.download = fname; a.click();
+      a.href = URL.createObjectURL(blob); a.download = fname;
+      document.body.appendChild(a); a.click(); a.remove();
       setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      return "download";
+    };
+    if (!forceDownload && navigator.canShare) {
+      const file = new File([blob], fname, { type: "application/json" });
+      if (navigator.canShare({ files: [file] })) {
+        try { await navigator.share({ files: [file], title: fname }); return "share"; }
+        catch (e) {
+          if (e && e.name === "AbortError") return "cancel";
+          return doDownload();
+        }
+      }
     }
-    return true;
+    return doDownload();
   }
   $("btnExport").onclick = async () => {
-    if (!await deliverSession(buildSession(state))) return;
+    const how = await deliverSession(buildSession(state));
+    if (how === "cancel") return toast("Share ပိတ်လိုက်လို့ မပို့ဖြစ်သေးပါ — ပြန် နှိပ်ပါ");
     markAllExported(state); save(); renderBooks(); renderSales(); renderOrders(); renderExport();
-    toast("Session ဖိုင် ထုတ်ပြီး (ထုတ်ပြီး အဖြစ် မှတ်ထားတယ်)");
+    toast(how === "share" ? "Share ပို့ပြီး (ထုတ်ပြီး အဖြစ် မှတ်ထားတယ်)"
+                          : "Download ဆွဲပြီး — Downloads folder ထဲမှာ ရှိတယ်");
   };
   $("btnExportAll").onclick = async () => {
-    await deliverSession(buildSession(state, true));
-    toast("မှတ်တမ်း အကုန် ပြန် ထုတ်ပြီး (အမှတ်အသား မပြောင်းပါ)");
+    const how = await deliverSession(buildSession(state, true));
+    if (how === "cancel") return toast("Share ပိတ်လိုက်လို့ မထုတ်ဖြစ်သေးပါ — ပြန် နှိပ်ပါ");
+    toast(how === "share" ? "မှတ်တမ်း အကုန် Share ပို့ပြီး (အမှတ်အသား မပြောင်းပါ)"
+                          : "အကုန် Download ဆွဲပြီး — Downloads folder ထဲမှာ ရှိတယ်");
+  };
+  $("btnDownloadAll").onclick = async () => {
+    await deliverSession(buildSession(state, true), true);
+    toast("Download ဆွဲပြီး — Downloads folder ထဲက tlk-session ဖိုင်ကို ကြည့်ပါ");
   };
   $("btnClearExported").onclick = () => {
     if (!confirm("ထုတ်ပြီးသားတွေ ရှင်းမလား?")) return;
