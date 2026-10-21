@@ -287,10 +287,78 @@ function loadState() {
           return s; } } catch (e) {}
   return emptyState();
 }
+/* Myanmar text key for matching — mirrors pos_db.myan_norm on the PC:
+   collapses IME code-point order variants, spaces/ZWSP, the two aa
+   signs and Myanmar digits so the same visible text compares equal. */
+const MARK_RANK = { 0x103B: 10, 0x103C: 11, 0x103D: 12, 0x103E: 13,
+  0x102D: 20, 0x102E: 21, 0x102F: 22, 0x1030: 23, 0x1031: 24,
+  0x102B: 25, 0x102C: 25, 0x1032: 26, 0x1036: 30, 0x1037: 31,
+  0x1038: 32, 0x103A: 40 };
+const _isComb = o => o >= 0x102B && o <= 0x103E;
+function _sortCluster(chars) {
+  if (chars.length <= 1) return chars.join("");
+  const k = chars.findIndex(c => !_isComb(c.codePointAt(0)));
+  if (k < 0) return chars;
+  let head, rest;
+  if (k > 0 && chars[k - 1] === "္") {
+    head = chars[k - 1] + chars[k];
+    rest = chars.slice(0, k - 1).concat(chars.slice(k + 1));
+  } else {
+    head = chars[k];
+    rest = chars.slice(0, k).concat(chars.slice(k + 1));
+  }
+  const items = [];
+  for (let i = 0; i < rest.length;) {
+    const ch = rest[i];
+    if (ch === "္" && i + 1 < rest.length) { items.push([5, ch + rest[i + 1]]); i += 2; }
+    else { items.push([MARK_RANK[ch.codePointAt(0)] ?? 50, ch]); i += 1; }
+  }
+  items.sort((a, b) => a[0] - b[0]);
+  return head + items.map(x => x[1]).join("");
+}
+function _clustersOf(s) {
+  const clusters = []; let cur = [], pending = [], prevStack = false;
+  for (const ch of s) {
+    const o = ch.codePointAt(0);
+    if (_isComb(o) || prevStack) {
+      if (o === 0x1031 && cur.length && !pending.length &&
+          cur.slice(1).some(m => (MARK_RANK[m.codePointAt(0)] ?? 50) >= 20)) pending = [ch];
+      else if (pending.length) pending.push(ch);
+      else cur.push(ch);
+    } else {
+      if (cur.length) {
+        if (cur.every(x => _isComb(x.codePointAt(0)))) pending = cur.concat(pending);
+        else clusters.push(cur);
+      }
+      cur = pending.length ? pending.concat([ch]) : [ch];
+      pending = [];
+    }
+    prevStack = (o === 0x1039);
+  }
+  if (cur.length) clusters.push(cur);
+  if (pending.length) {
+    if (clusters.length) clusters[clusters.length - 1] = clusters[clusters.length - 1].concat(pending);
+    else clusters.push(pending);
+  }
+  return clusters;
+}
+function normKey(s) {
+  if (!s) return "";
+  s = String(s).normalize("NFC")
+    .replace(/[\s ​‌‍]/g, "")
+    .replace(/[၀-၉]/g, d => String(d.charCodeAt(0) - 0x1040))
+    .replace(/ါ/g, "ာ");
+  return _clustersOf(s).map(c => _sortCluster(c)).join("");
+}
 function addBook(st, data) {
   const isbn = (data.isbn || "").trim();
   if (isbn) {
     const ex = st.books.find(b => b.isbn === isbn);
+    if (ex) { ex.qty += data.qty; ex.exported = false; return "merged"; }
+  } else {
+    const tk = normKey(data.title), ak = normKey(data.author || "");
+    const ex = st.books.find(b => !b.isbn && normKey(b.title) === tk &&
+                                  normKey(b.author || "") === ak);
     if (ex) { ex.qty += data.qty; ex.exported = false; return "merged"; }
   }
   st.books.push({ id: uid(), isbn: isbn, title: data.title, author: data.author || "",
@@ -472,7 +540,7 @@ if (typeof document !== "undefined") {
       if (b) Object.assign(b, data, { exported: false });
       toast("ပြင်ပြီး");
     } else {
-      toast(addBook(state, data) === "merged" ? "ISBN တူလို့ အုပ်ရေ ပေါင်းထည့်ပြီး" : "သိမ်းပြီး");
+      toast(addBook(state, data) === "merged" ? "ရှိပြီးသား စာအုပ်နဲ့ တူလို့ အုပ်ရေ ပေါင်းထည့်ပြီး" : "သိမ်းပြီး");
     }
     save(); clearBookForm(); renderBooks();
   };
