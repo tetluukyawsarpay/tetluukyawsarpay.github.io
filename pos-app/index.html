@@ -123,6 +123,8 @@
         <div><label>စာရေးသူ</label><input id="b_author"/></div>
         <div><label>ထုတ်ဝေသည့်တိုက်</label><input id="b_publisher"/></div>
       </div>
+      <label>တိုက် ဆက်သွယ်ရန် ဖုန်း (လိုမှ ထည့်ပါ — နံပါတ် ၂-၃ လုံး)</label>
+      <input id="b_pubphone" inputmode="tel" placeholder="09 ... , 09 ... , 09 ..."/>
       <label>အမျိုးအစား</label>
       <input id="b_category"/>
       <div class="row3">
@@ -354,15 +356,20 @@ function addBook(st, data) {
   const isbn = (data.isbn || "").trim();
   if (isbn) {
     const ex = st.books.find(b => b.isbn === isbn);
-    if (ex) { ex.qty += data.qty; ex.exported = false; return "merged"; }
+    if (ex) { ex.qty += data.qty; ex.exported = false;
+      if (!ex.pub_phone && data.pub_phone) ex.pub_phone = data.pub_phone;
+      return "merged"; }
   } else {
     const tk = normKey(data.title), ak = normKey(data.author || "");
     const ex = st.books.find(b => !b.isbn && normKey(b.title) === tk &&
                                   normKey(b.author || "") === ak);
-    if (ex) { ex.qty += data.qty; ex.exported = false; return "merged"; }
+    if (ex) { ex.qty += data.qty; ex.exported = false;
+      if (!ex.pub_phone && data.pub_phone) ex.pub_phone = data.pub_phone;
+      return "merged"; }
   }
   st.books.push({ id: uid(), isbn: isbn, title: data.title, author: data.author || "",
     publisher: data.publisher || "", category: data.category || "",
+    pub_phone: data.pub_phone || "",
     list_price: data.list_price, buy_discount: data.buy_discount || 0,
     qty: data.qty, created_at: nowStr(), exported: false });
   return "added";
@@ -412,6 +419,7 @@ function buildSession(st, all) {
   return { app: "tlk-phone", version: 2, exported_at: nowStr(),
     books: st.books.filter(keep).map(b => ({ id: b.id, isbn: b.isbn,
       title: b.title, author: b.author, publisher: b.publisher, category: b.category,
+      pub_phone: b.pub_phone || "",
       list_price: b.list_price, buy_discount: b.buy_discount, qty: b.qty,
       created_at: b.created_at })),
     sales: st.sales.filter(keep).map(s => ({ id: s.id, customer: s.customer,
@@ -503,7 +511,7 @@ if (typeof document !== "undefined") {
     $("bookCount").textContent = state.books.length ? `(${state.books.length} မျိုး၊ ${copies} အုပ်)` : "";
     el.innerHTML = state.books.map(b =>
       `<div class="item"><div><span class="nm">${esc(b.title)}</span>` +
-      `<div class="sub">${esc(b.author || "")} ${b.publisher ? "• " + esc(b.publisher) : ""} • ${mm(b.list_price)} ကျပ်${b.exported ? ' • <span class="ok">ထုတ်ပြီး</span>' : ""}</div></div>` +
+      `<div class="sub">${esc(b.author || "")} ${b.publisher ? "• " + esc(b.publisher) : ""}${b.pub_phone ? " • 📞 " + esc(b.pub_phone) : ""} • ${mm(b.list_price)} ကျပ်${b.exported ? ' • <span class="ok">ထုတ်ပြီး</span>' : ""}</div></div>` +
       `<div class="amt">× ${b.qty}</div>` +
       `<button class="mini alt" data-edit="${b.id}">ပြင်</button>` +
       `<button class="mini warn" data-del="${b.id}">✕</button></div>`).join("") ||
@@ -518,12 +526,13 @@ if (typeof document !== "undefined") {
     editingBookId = id;
     $("b_isbn").value = b.isbn; $("b_title").value = b.title; $("b_author").value = b.author;
     $("b_publisher").value = b.publisher; $("b_category").value = b.category;
+    $("b_pubphone").value = b.pub_phone || "";
     $("b_price").value = b.list_price; $("b_disc").value = b.buy_discount || ""; $("b_qty").value = b.qty;
     $("btnAddBook").textContent = "ပြင်ပြီး သိမ်းမည်";
     window.scrollTo(0, 0); toast("ပြင်ရန် အဆင်သင့်");
   }
   function clearBookForm() {
-    ["b_isbn", "b_title", "b_author", "b_publisher", "b_category", "b_price", "b_disc"].forEach(i => $(i).value = "");
+    ["b_isbn", "b_title", "b_author", "b_publisher", "b_category", "b_price", "b_disc", "b_pubphone"].forEach(i => $(i).value = "");
     $("b_qty").value = 1; editingBookId = null; $("btnAddBook").textContent = "သိမ်းမည်";
   }
   $("btnAddBook").onclick = () => {
@@ -534,6 +543,7 @@ if (typeof document !== "undefined") {
     if (!qty || qty <= 0) return toast("အုပ်ရေ ထည့်ပါ");
     const data = { isbn: $("b_isbn").value, title: title, author: $("b_author").value.trim(),
       publisher: $("b_publisher").value.trim(), category: $("b_category").value.trim(),
+      pub_phone: $("b_pubphone").value.trim(),
       list_price: price, buy_discount: parseFloat($("b_disc").value) || 0, qty: qty };
     if (editingBookId) {
       const b = state.books.find(x => x.id === editingBookId);

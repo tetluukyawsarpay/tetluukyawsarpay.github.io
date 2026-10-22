@@ -1,4 +1,4 @@
-const CACHE = "tlk-phone-v8";
+const CACHE = "tlk-phone-v9";
 const ASSETS = ["./", "./index.html", "./manifest.webmanifest", "./icon.svg", "./logo.js",
   "https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js"];
 self.addEventListener("install", e => {
