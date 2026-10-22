@@ -120,19 +120,22 @@
       <label>စာအုပ်အမည် *</label>
       <input id="b_title"/>
       <div class="row2">
-        <div><label>စာရေးသူ</label><input id="b_author"/></div>
-        <div><label>ထုတ်ဝေသည့်တိုက်</label><input id="b_publisher"/></div>
+        <div><label>စာရေးသူ</label><input id="b_author" list="dl_author"/></div>
+        <div><label>ထုတ်ဝေသည့်တိုက်</label><input id="b_publisher" list="dl_publisher"/></div>
       </div>
       <label>တိုက် ဆက်သွယ်ရန် ဖုန်း (လိုမှ ထည့်ပါ — နံပါတ် ၂-၃ လုံး)</label>
       <input id="b_pubphone" inputmode="tel" placeholder="09 ... , 09 ... , 09 ..."/>
       <label>အမျိုးအစား</label>
-      <input id="b_category"/>
+      <input id="b_category" list="dl_category"/>
       <div class="row3">
         <div><label>မူရင်းဈေး *</label><input id="b_price" inputmode="numeric"/></div>
-        <div><label>ဝယ် လျော့%</label><input id="b_disc" inputmode="decimal"/></div>
+        <div><label>ဝယ် လျော့%</label><input id="b_disc" inputmode="decimal" value="20"/></div>
         <div><label>အုပ်ရေ *</label><input id="b_qty" inputmode="numeric" value="1"/></div>
       </div>
       <button class="big" id="btnAddBook" style="margin-top:12px;">သိမ်းမည်</button>
+      <datalist id="dl_author"></datalist>
+      <datalist id="dl_publisher"></datalist>
+      <datalist id="dl_category"></datalist>
     </div>
     <div class="card">
       <div style="font-weight:bold;">သွင်းထားသော စာအုပ်များ <span id="bookCount"></span></div>
@@ -357,14 +360,14 @@ function addBook(st, data) {
   if (isbn) {
     const ex = st.books.find(b => b.isbn === isbn);
     if (ex) { ex.qty += data.qty; ex.exported = false;
-      if (!ex.pub_phone && data.pub_phone) ex.pub_phone = data.pub_phone;
+      if (data.pub_phone) ex.pub_phone = data.pub_phone;
       return "merged"; }
   } else {
     const tk = normKey(data.title), ak = normKey(data.author || "");
     const ex = st.books.find(b => !b.isbn && normKey(b.title) === tk &&
                                   normKey(b.author || "") === ak);
     if (ex) { ex.qty += data.qty; ex.exported = false;
-      if (!ex.pub_phone && data.pub_phone) ex.pub_phone = data.pub_phone;
+      if (data.pub_phone) ex.pub_phone = data.pub_phone;
       return "merged"; }
   }
   st.books.push({ id: uid(), isbn: isbn, title: data.title, author: data.author || "",
@@ -373,6 +376,12 @@ function addBook(st, data) {
     list_price: data.list_price, buy_discount: data.buy_discount || 0,
     qty: data.qty, created_at: nowStr(), exported: false });
   return "added";
+}
+function propagatePubPhone(st, publisher, phone) {
+  const pub = (publisher || "").trim(), ph = (phone || "").trim();
+  if (!pub || !ph) return;
+  const k = normKey(pub);
+  st.books.forEach(b => { if (normKey(b.publisher || "") === k) b.pub_phone = ph; });
 }
 function findBookByIsbn(st, isbn) {
   isbn = (isbn || "").trim();
@@ -505,7 +514,18 @@ if (typeof document !== "undefined") {
   $("tab-export").onclick = () => showTab("export");
 
   /* books */
+  function fillSuggestions() {
+    const grab = key => { const m = new Map();
+      state.books.forEach(b => { const v = (b[key] || "").trim();
+        if (v && !m.has(normKey(v))) m.set(normKey(v), v); });
+      return [...m.values()].sort(); };
+    const put = (id, vals) => { const dl = $(id);
+      if (dl) dl.innerHTML = vals.map(v => `<option value="${esc(v)}">`).join(""); };
+    put("dl_author", grab("author")); put("dl_publisher", grab("publisher"));
+    put("dl_category", grab("category"));
+  }
   function renderBooks() {
+    fillSuggestions();
     const el = $("bookList");
     const copies = state.books.reduce((a, b) => a + b.qty, 0);
     $("bookCount").textContent = state.books.length ? `(${state.books.length} မျိုး၊ ${copies} အုပ်)` : "";
@@ -532,9 +552,20 @@ if (typeof document !== "undefined") {
     window.scrollTo(0, 0); toast("ပြင်ရန် အဆင်သင့်");
   }
   function clearBookForm() {
-    ["b_isbn", "b_title", "b_author", "b_publisher", "b_category", "b_price", "b_disc", "b_pubphone"].forEach(i => $(i).value = "");
+    ["b_isbn", "b_title", "b_author", "b_publisher", "b_category", "b_price", "b_pubphone"].forEach(i => $(i).value = "");
+    $("b_disc").value = "20"; lastAutoPhone = "";
     $("b_qty").value = 1; editingBookId = null; $("btnAddBook").textContent = "သိမ်းမည်";
   }
+  let lastAutoPhone = "";
+  $("b_publisher").addEventListener("change", () => {
+    const k = normKey($("b_publisher").value.trim());
+    if (!k) return;
+    const hit = state.books.find(b => b.pub_phone && normKey(b.publisher || "") === k);
+    const cur = $("b_pubphone").value.trim();
+    if (hit && (cur === "" || cur === lastAutoPhone)) {
+      $("b_pubphone").value = hit.pub_phone; lastAutoPhone = hit.pub_phone;
+    }
+  });
   $("btnAddBook").onclick = () => {
     const title = $("b_title").value.trim(), price = parseInt($("b_price").value, 10),
           qty = parseInt($("b_qty").value, 10);
@@ -552,6 +583,7 @@ if (typeof document !== "undefined") {
     } else {
       toast(addBook(state, data) === "merged" ? "ရှိပြီးသား စာအုပ်နဲ့ တူလို့ အုပ်ရေ ပေါင်းထည့်ပြီး" : "သိမ်းပြီး");
     }
+    propagatePubPhone(state, data.publisher, data.pub_phone);
     save(); clearBookForm(); renderBooks();
   };
 
