@@ -24,6 +24,7 @@ sitemap: false
   .tlk-qty { display: inline-flex; gap: 8px; align-items: center; }
   .tlk-qty button { background: var(--tlk-pill-bg); color: var(--tlk-text); border: 1px solid var(--tlk-border); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-weight: bold; }
   .tlk-field label { font-size: 13px; font-weight: bold; display: block; margin-top: 10px; }
+  .tlk-field input[type="radio"] { width: auto; }
   .tlk-field input, .tlk-field textarea { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--tlk-border); background: var(--tlk-input-bg); color: var(--tlk-text); box-sizing: border-box; margin-top: 4px; font-size: 14px; }
   .tlk-muted { color: var(--tlk-muted); font-size: 12.5px; line-height: 1.6; }
 </style>
@@ -134,6 +135,11 @@ sitemap: false
       var map = {'tlk-f-name': c.name, 'tlk-f-phone': c.phone, 'tlk-f-city': c.city, 'tlk-f-address': c.address};
       Object.keys(map).forEach(function (k) { var el = document.getElementById(k); if (el && !el.value) el.value = map[k] || ''; });
     } catch (e) {}
+  }
+  function orderRef() {
+    var d = new Date();
+    function p(n) { return (n < 10 ? '0' : '') + n; }
+    return 'TLK-' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds());
   }
   function submitOrder(e) {
     e.preventDefault();
