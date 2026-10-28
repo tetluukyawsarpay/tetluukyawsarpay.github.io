@@ -1,0 +1,203 @@
+---
+layout: default
+sitemap: false
+---
+
+<style>
+  .tlk-cart-wrap { width: 100vw; margin-left: calc(50% - 50vw); box-sizing: border-box; padding: 20px 20px 48px; background: #0d1117; color: #f0f3f6;
+    --tlk-card: #161b22;
+    --tlk-card2: #21262d;
+    --tlk-text: #f0f3f6;
+    --tlk-muted: #8b949e;
+    --tlk-border: #30363d;
+    --tlk-accent: #f0883e;
+    --tlk-blue: #58a6ff;
+    --tlk-input-bg: #0d1117;
+    --tlk-pill-bg: #21262d;
+    --tlk-pill-text: #c9d2d9;
+  }
+  .tlk-cart-inner { max-width: 760px; margin: 0 auto; }
+  .tlk-cart-inner h1 { font-size: 22px; color: var(--tlk-text); margin: 8px 0 20px; }
+  .tlk-btn { padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; text-decoration: none; color: #fff; white-space: nowrap; display: inline-block; }
+  .tlk-cart-item { border: 1px solid var(--tlk-border); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; background: var(--tlk-card); }
+  .tlk-cart-item p { margin: 4px 0; font-size: 14px; line-height: 1.5; }
+  .tlk-qty { display: inline-flex; gap: 8px; align-items: center; }
+  .tlk-qty button { background: var(--tlk-pill-bg); color: var(--tlk-text); border: 1px solid var(--tlk-border); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-weight: bold; }
+  .tlk-field label { font-size: 13px; font-weight: bold; display: block; margin-top: 10px; }
+  .tlk-field input, .tlk-field textarea { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--tlk-border); background: var(--tlk-input-bg); color: var(--tlk-text); box-sizing: border-box; margin-top: 4px; font-size: 14px; }
+  .tlk-muted { color: var(--tlk-muted); font-size: 12.5px; line-height: 1.6; }
+</style>
+
+<div class="tlk-cart-wrap"><div class="tlk-cart-inner">
+  <a class="tlk-btn" style="background:var(--tlk-pill-bg); color:var(--tlk-text); border:1px solid var(--tlk-border);" href="index.html">← ပင်မစာမျက်နှာသို့ ပြန်မည်</a>
+  <h1>🛒 ခြင်းထဲက စာအုပ်များ</h1>
+  <div id="tlk-cart-items"></div>
+  <p id="tlk-cart-subtotal" style="font-weight:bold; color:var(--tlk-accent);"></p>
+  <form id="tlk-order-form" onsubmit="return submitOrder(event)">
+    <div class="tlk-field"><label>အမည် *</label><input id="tlk-f-name" type="text" required></div>
+    <div class="tlk-field"><label>ဖုန်းနံပါတ် *</label><input id="tlk-f-phone" type="tel" required></div>
+    <div class="tlk-field"><label>မြို့ / မြို့နယ် *</label><input id="tlk-f-city" type="text" required></div>
+    <div class="tlk-field"><label>လိပ်စာအပြည့်အစုံ *</label><textarea id="tlk-f-address" rows="3" required></textarea></div>
+    <div class="tlk-field"><label>ပို့ဆောင်မှု</label><p style="margin:6px 0;">Royal Express ပဲ (အခြား ပို့ဆောင်မှုလိုပါက ဖုန်းဆက်ပါ)</p></div>
+    <div class="tlk-field"><label>ငွေပေးချေမှု အကြိုက်</label>
+      <p style="margin:6px 0;"><label style="display:inline; font-weight:normal;"><input type="radio" name="tlk-pay" value="COD" checked> COD</label>&nbsp;&nbsp;<label style="display:inline; font-weight:normal;"><input type="radio" name="tlk-pay" value="ကြိုလွှဲ"> ကြိုလွှဲ</label></p>
+    </div>
+    <div class="tlk-field"><label>မှတ်ချက်</label><textarea id="tlk-f-note" rows="2"></textarea></div>
+    <p class="tlk-muted">ပို့ခကို site မှာ အကြမ်းဖျင်းပဲ ပြသည်။ အတိအကျကို ဖုန်းဆက်ချိန်မှာ စာအုပ်တွေ ချိန်ပြီး ပြောပေးမည်။ နေ့လည် ၁၂ နာရီနောက်ပိုင်း အမှာစာများသည် နောက်နေ့မှ ပို့ဆောင်ရေးသို့ အပ်နိုင်သည်။ ဖုန်းဖြင့် အတည်ပြုပြီးမှသာ ပို့မည်။</p>
+    <button class="tlk-btn" style="width:100%; background:#0088cc; color:#fff; border:none; cursor:pointer; padding:12px;" type="submit">အမှာစာ တင်မည်</button>
+  </form>
+  <div id="tlk-order-done" style="display:none;">
+    <p style="font-weight:bold; color:var(--tlk-accent);">အမှာစာ တင်ပြီးပါပြီ။ Telegram မှာ Send နှိပ်ရင် အသိပေးချက် ရောက်မယ်။</p>
+    <p id="tlk-order-ref"></p>
+    <button class="tlk-btn" style="background:var(--tlk-pill-bg); color:var(--tlk-text); border:1px solid var(--tlk-border); cursor:pointer;" onclick="copyLastOrder()">📋 အမှာစာ စာသား ကူးယူရန်</button>
+    <div id="tlk-save-prompt" style="margin-top:14px; border:1px solid var(--tlk-border); border-radius:8px; padding:12px;">
+      <p style="margin:0 0 10px;">နောက်တစ်ခါ လွယ်အောင် အချက်အလက် သိမ်းထားမလား</p>
+      <button class="tlk-btn" style="background:#238636; color:#fff; border:none; cursor:pointer;" onclick="saveCustomerInfo()">ဟုတ်ကဲ့၊ သိမ်းထားပါ</button>
+      <button class="tlk-btn" style="background:var(--tlk-pill-bg); color:var(--tlk-text); border:1px solid var(--tlk-border); cursor:pointer;" onclick="skipSave()">မလိုပါဘူး</button>
+      <p id="tlk-save-note" class="tlk-muted"></p>
+    </div>
+    <button class="tlk-btn" style="margin-top:14px; background:var(--tlk-pill-bg); color:var(--tlk-text); border:1px solid var(--tlk-border); cursor:pointer;" onclick="clearCartAfterOrder()">ခြင်းကို ရှင်းမည်</button>
+  </div>
+  <p style="margin-top:20px;"><a class="tlk-btn" style="background:var(--tlk-pill-bg); color:var(--tlk-text); border:1px solid var(--tlk-border);" href="index.html">📚 စာအုပ် ဆက်ရွေးမည်</a></p>
+</div></div>
+
+<script>
+  function copyText(t) {
+    function done(ok) { alert(ok ? 'Link ကူးယူပြီးပါပြီ' : 'ကူးယူ၍မရပါ။ Link: ' + t); }
+    function fallbackCopy() {
+      var ta = document.createElement('textarea');
+      ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select();
+      try { done(document.execCommand('copy')); } catch (e) { done(false); }
+      document.body.removeChild(ta);
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(t).then(function () { done(true); }, fallbackCopy);
+    } else { fallbackCopy(); }
+  }
+  var tlkCart = [];
+  try { tlkCart = JSON.parse(localStorage.getItem('tlk-cart') || '[]'); } catch (e) { tlkCart = []; }
+  var tlkLastOrderMsg = '';
+  var tlkLastOrderRef = '';
+  function tlkDigitsToAscii(s) {
+    var map = {'၀':'0','၁':'1','၂':'2','၃':'3','၄':'4','၅':'5','၆':'6','၇':'7','၈':'8','၉':'9'};
+    return String(s).replace(/[၀-၉]/g, function (d) { return map[d]; });
+  }
+  function parsePrice(s) {
+    var a = tlkDigitsToAscii(s).replace(/,/g, '');
+    var m = a.match(/\d+/);
+    return m ? parseInt(m[0], 10) : 0;
+  }
+  function fmtMMK(n) {
+    var a = String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    var map = {'0':'၀','1':'၁','2':'၂','3':'၃','4':'၄','5':'၅','6':'၆','7':'၇','8':'၈','9':'၉'};
+    return a.replace(/[0-9]/g, function (d) { return map[d]; }) + ' ကျပ်';
+  }
+  function saveCart() { try { localStorage.setItem('tlk-cart', JSON.stringify(tlkCart)); } catch (e) {} updateCartCount(); }
+  function updateCartCount() {
+    var c = 0; tlkCart.forEach(function (it) { c += it.qty; });
+    var el = document.getElementById('tlk-cart-count'); if (el) el.textContent = c;
+  }
+  function addToCart(id, btn) {
+    var title = btn.getAttribute('data-title') || '';
+    var author = btn.getAttribute('data-author') || '';
+    var price = btn.getAttribute('data-price') || '';
+    var found = null; tlkCart.forEach(function (it) { if (it.id === id) found = it; });
+    if (found) { found.qty += 1; } else { tlkCart.push({id: id, title: title, author: author, price: price, unit: parsePrice(price), qty: 1}); }
+    saveCart();
+    var old = btn.textContent; btn.textContent = '✓ ထည့်ပြီးပြီ';
+    setTimeout(function () { btn.textContent = old; }, 1200);
+  }
+  function changeQty(id, delta) {
+    tlkCart.forEach(function (it) { if (it.id === id) it.qty += delta; });
+    tlkCart = tlkCart.filter(function (it) { return it.qty > 0; });
+    saveCart(); renderCart();
+  }
+  function removeItem(id) { tlkCart = tlkCart.filter(function (it) { return it.id !== id; }); saveCart(); renderCart(); }
+  function cartSubtotal() { var t = 0; tlkCart.forEach(function (it) { t += it.unit * it.qty; }); return t; }
+  function renderCart() {
+    var box = document.getElementById('tlk-cart-items'); if (!box) return;
+    if (tlkCart.length === 0) { box.innerHTML = '<p class="tlk-muted">ခြင်းထဲမှာ စာအုပ်မရှိသေးပါ။</p>'; }
+    else {
+      var html = '';
+      tlkCart.forEach(function (it) {
+        html += '<div class="tlk-cart-item"><p><strong>' + it.title + '</strong></p><p class="tlk-muted">' + it.author + ' — ' + it.price + '</p><p><span class="tlk-qty"><button type="button" onclick="changeQty(\'' + it.id + '\', -1)">−</button><span>' + it.qty + '</span><button type="button" onclick="changeQty(\'' + it.id + '\', 1)">+</button></span>&nbsp; <button type="button" style="background:none; border:none; color:var(--tlk-muted); cursor:pointer;" onclick="removeItem(\'' + it.id + '\')">ဖျက်မည်</button></p></div>';
+      });
+      box.innerHTML = html;
+    }
+    var sub = document.getElementById('tlk-cart-subtotal'); if (sub) sub.textContent = 'စာအုပ်ဖိုး စုစုပေါင်း: ' + fmtMMK(cartSubtotal()) + ' (ပို့ခ မပါ)';
+    updateCartCount();
+  }
+  function prefillCustomer() {
+    try {
+      var c = JSON.parse(localStorage.getItem('tlk-customer') || 'null'); if (!c) return;
+      var map = {'tlk-f-name': c.name, 'tlk-f-phone': c.phone, 'tlk-f-city': c.city, 'tlk-f-address': c.address};
+      Object.keys(map).forEach(function (k) { var el = document.getElementById(k); if (el && !el.value) el.value = map[k] || ''; });
+    } catch (e) {}
+  }
+  function submitOrder(e) {
+    e.preventDefault();
+    if (tlkCart.length === 0) { alert('ခြင်းထဲမှာ စာအုပ်မရှိသေးပါ။'); return false; }
+    var name = document.getElementById('tlk-f-name').value.trim();
+    var phone = document.getElementById('tlk-f-phone').value.trim();
+    var city = document.getElementById('tlk-f-city').value.trim();
+    var addr = document.getElementById('tlk-f-address').value.trim();
+    var note = document.getElementById('tlk-f-note').value.trim();
+    var payEl = document.querySelector('input[name="tlk-pay"]:checked');
+    var pay = payEl ? payEl.value : 'COD';
+    if (!name || !phone || !city || !addr) { alert('အမည်၊ ဖုန်း၊ မြို့/မြို့နယ်၊ လိပ်စာ ဖြည့်ပါ။'); return false; }
+    tlkLastOrderRef = orderRef();
+    var lines = [];
+    lines.push('အမှာစာ: ' + tlkLastOrderRef);
+    lines.push('အမည်: ' + name);
+    lines.push('ဖုန်း: ' + phone);
+    lines.push('မြို့/မြို့နယ်: ' + city);
+    lines.push('လိပ်စာ: ' + addr);
+    lines.push('ပို့ဆောင်မှု: Royal Express');
+    lines.push('ငွေပေးချေမှု: ' + pay);
+    lines.push('စာအုပ်များ:');
+    tlkCart.forEach(function (it) { lines.push('- ' + it.title + ' x ' + it.qty + ' — ' + it.price); });
+    lines.push('စာအုပ်ဖိုး စုစုပေါင်း: ' + fmtMMK(cartSubtotal()));
+    if (note) lines.push('မှတ်ချက်: ' + note);
+    tlkLastOrderMsg = lines.join('\n');
+    try {
+      var ta = document.createElement('textarea'); ta.value = tlkLastOrderMsg; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    } catch (err) {}
+    try {
+      var fd = new URLSearchParams();
+      var itemsText = '';
+      tlkCart.forEach(function (it) { itemsText += it.title + ' x ' + it.qty + ' — ' + it.price + '\n'; });
+      fd.append('entry.1678628091', tlkLastOrderRef);
+      fd.append('entry.1158827098', name);
+      fd.append('entry.147688758', phone);
+      fd.append('entry.932807802', city);
+      fd.append('entry.1154761023', addr);
+      fd.append('entry.1290695973', 'Royal Express');
+      fd.append('entry.37708290', pay);
+      fd.append('entry.1565026608', itemsText);
+      fd.append('entry.1405201851', fmtMMK(cartSubtotal()));
+      fd.append('entry.1141673205', note);
+      fd.append('fvv', '1'); fd.append('draftResponse', '[]'); fd.append('pageHistory', '0'); fd.append('submit', 'Submit');
+      fetch('https://docs.google.com/forms/d/e/1FAIpQLSfBF6kqSIPn-GNX2JyZyDhRh3lK6VCOuAiioGceoyrht2nNIQ/formResponse', {method: 'POST', mode: 'no-cors', body: fd});
+    } catch (err) {}
+    window.open('https://t.me/tetluukyawsarpay?text=' + encodeURIComponent(tlkLastOrderMsg), '_blank');
+    document.getElementById('tlk-order-form').style.display = 'none';
+    document.getElementById('tlk-order-done').style.display = 'block';
+    document.getElementById('tlk-order-ref').textContent = 'အမှာစာ အမှတ်: ' + tlkLastOrderRef;
+    document.getElementById('tlk-save-note').textContent = '';
+    return false;
+  }
+  function copyLastOrder() { if (tlkLastOrderMsg) copyText(tlkLastOrderMsg); }
+  function saveCustomerInfo() {
+    try {
+      localStorage.setItem('tlk-customer', JSON.stringify({name: document.getElementById('tlk-f-name').value, phone: document.getElementById('tlk-f-phone').value, city: document.getElementById('tlk-f-city').value, address: document.getElementById('tlk-f-address').value}));
+      document.getElementById('tlk-save-note').textContent = 'သိမ်းပြီးပါပြီ — နောက်တစ်ခါ ဖောင်မှာ အလိုအလျောက် ဖြည့်ပေးမယ်။';
+    } catch (e) {}
+  }
+  function skipSave() { document.getElementById('tlk-save-prompt').style.display = 'none'; }
+  function clearCartAfterOrder() { tlkCart = []; saveCart(); renderCart(); document.getElementById('tlk-order-form').style.display = ''; document.getElementById('tlk-order-done').style.display = 'none'; document.getElementById('tlk-order-form').reset(); prefillCustomer(); }
+  updateCartCount();
+  renderCart();
+  prefillCustomer();
+</script>
