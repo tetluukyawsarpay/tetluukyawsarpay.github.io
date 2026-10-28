@@ -310,10 +310,10 @@ layout: default
     </div>
     <div class="tlk-field"><label>မှတ်ချက်</label><textarea id="tlk-f-note" rows="2"></textarea></div>
     <p class="tlk-muted">ပို့ခကို site မှာ အကြမ်းဖျင်းပဲ ပြသည်။ အတိအကျကို ဖုန်းဆက်ချိန်မှာ စာအုပ်တွေ ချိန်ပြီး ပြောပေးမည်။ နေ့လည် ၁၂ နာရီနောက်ပိုင်း အမှာစာများသည် နောက်နေ့မှ ပို့ဆောင်ရေးသို့ အပ်နိုင်သည်။ ဖုန်းဖြင့် အတည်ပြုပြီးမှသာ ပို့မည်။</p>
-    <button class="tlk-btn" style="width:100%; background:#0088cc; color:#fff; border:none; cursor:pointer; padding:12px;" type="submit">✈️ Telegram ဖြင့် အမှာစာ ပို့မည်</button>
+    <button class="tlk-btn" style="width:100%; background:#0088cc; color:#fff; border:none; cursor:pointer; padding:12px;" type="submit">အမှာစာ တင်မည်</button>
   </form>
   <div id="tlk-order-done" style="display:none;">
-    <p style="font-weight:bold; color:var(--tlk-accent);">အမှာစာ ပြင်ဆင်ပြီးပါပြီ။ Telegram မှာ Send နှိပ်မှ အမှာစာ ရောက်မယ်။</p>
+    <p style="font-weight:bold; color:var(--tlk-accent);">အမှာစာ တင်ပြီးပါပြီ။ Telegram မှာ Send နှိပ်ရင် အသိပေးချက် ရောက်မယ်။</p>
     <p id="tlk-order-ref"></p>
     <button class="tlk-btn" style="background:var(--tlk-pill-bg); color:var(--tlk-text); border:1px solid var(--tlk-border); cursor:pointer;" onclick="copyLastOrder()">📋 အမှာစာ စာသား ကူးယူရန်</button>
     <div id="tlk-save-prompt" style="margin-top:14px; border:1px solid var(--tlk-border); border-radius:8px; padding:12px;">
@@ -486,6 +486,23 @@ layout: default
     try {
       var ta = document.createElement('textarea'); ta.value = tlkLastOrderMsg; ta.style.position = 'fixed'; ta.style.opacity = '0';
       document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    } catch (err) {}
+    try {
+      var fd = new URLSearchParams();
+      var itemsText = '';
+      tlkCart.forEach(function (it) { itemsText += it.title + ' x ' + it.qty + ' — ' + it.price + '\n'; });
+      fd.append('entry.1678628091', tlkLastOrderRef);
+      fd.append('entry.1158827098', name);
+      fd.append('entry.147688758', phone);
+      fd.append('entry.932807802', city);
+      fd.append('entry.1154761023', addr);
+      fd.append('entry.1290695973', 'Royal Express');
+      fd.append('entry.37708290', pay);
+      fd.append('entry.1565026608', itemsText);
+      fd.append('entry.1405201851', fmtMMK(cartSubtotal()));
+      fd.append('entry.1141673205', note);
+      fd.append('fvv', '1'); fd.append('draftResponse', '[]'); fd.append('pageHistory', '0'); fd.append('submit', 'Submit');
+      fetch('https://docs.google.com/forms/d/e/1FAIpQLSfBF6kqSIPn-GNX2JyZyDhRh3lK6VCOuAiioGceoyrht2nNIQ/formResponse', {method: 'POST', mode: 'no-cors', body: fd});
     } catch (err) {}
     window.open('https://t.me/tetluukyawsarpay?text=' + encodeURIComponent(tlkLastOrderMsg), '_blank');
     document.getElementById('tlk-order-form').style.display = 'none';
