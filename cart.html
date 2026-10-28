@@ -48,7 +48,9 @@ sitemap: false
     <button class="tlk-btn" style="width:100%; background:#0088cc; color:#fff; border:none; cursor:pointer; padding:12px;" type="submit">အမှာစာ တင်မည်</button>
   </form>
   <div id="tlk-order-done" style="display:none;">
-    <p style="font-weight:bold; color:var(--tlk-accent);">အမှာစာ တင်ပြီးပါပြီ။ Telegram မှာ Send နှိပ်ရင် အသိပေးချက် ရောက်မယ်။</p>
+    <p style="font-weight:bold; color:var(--tlk-accent);">အမှာစာ Form သို့ တင်ပြီးပါပြီ။</p>
+    <p class="tlk-muted">Telegram မှာ အမှာစာ စာသား မပေါ်ရင် အောက်က စာသားကို ကူးပြီး Telegram chat ထဲမှာ paste လုပ် Send လုပ်ပါ။</p>
+    <textarea id="tlk-order-text" rows="10" readonly style="width:100%; padding:10px; border-radius:6px; border:1px solid var(--tlk-border); background:var(--tlk-input-bg); color:var(--tlk-text); box-sizing:border-box; font-size:13px;"></textarea>
     <p id="tlk-order-ref"></p>
     <button class="tlk-btn" style="background:var(--tlk-pill-bg); color:var(--tlk-text); border:1px solid var(--tlk-border); cursor:pointer;" onclick="copyLastOrder()">📋 အမှာစာ စာသား ကူးယူရန်</button>
     <div id="tlk-save-prompt" style="margin-top:14px; border:1px solid var(--tlk-border); border-radius:8px; padding:12px;">
@@ -187,14 +189,22 @@ sitemap: false
       fd.append('fvv', '1'); fd.append('draftResponse', '[]'); fd.append('pageHistory', '0'); fd.append('submit', 'Submit');
       fetch('https://docs.google.com/forms/d/e/1FAIpQLSfBF6kqSIPn-GNX2JyZyDhRh3lK6VCOuAiioGceoyrht2nNIQ/formResponse', {method: 'POST', mode: 'no-cors', body: fd});
     } catch (err) {}
-    window.open('https://t.me/tetluukyawsarpay?text=' + encodeURIComponent(tlkLastOrderMsg), '_blank');
+    window.open('https://t.me/share/url?url=' + encodeURIComponent('https://tetluukyawsarpay.github.io/') + '&text=' + encodeURIComponent(tlkLastOrderMsg), '_blank');
     document.getElementById('tlk-order-form').style.display = 'none';
     document.getElementById('tlk-order-done').style.display = 'block';
     document.getElementById('tlk-order-ref').textContent = 'အမှာစာ အမှတ်: ' + tlkLastOrderRef;
+    var ot = document.getElementById('tlk-order-text'); if (ot) ot.value = tlkLastOrderMsg;
     document.getElementById('tlk-save-note').textContent = '';
     return false;
   }
-  function copyLastOrder() { if (tlkLastOrderMsg) copyText(tlkLastOrderMsg); }
+  function copyLastOrder() {
+    if (!tlkLastOrderMsg) return;
+    try {
+      var ta = document.createElement('textarea'); ta.value = tlkLastOrderMsg; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+      alert('အမှာစာ စာသား ကူးယူပြီးပါပြီ');
+    } catch (e) { alert('ကူးယူ၍မရပါ။ အောက်က စာသားကို ရွေးပြီး ကူးပါ။'); }
+  }
   function saveCustomerInfo() {
     try {
       localStorage.setItem('tlk-customer', JSON.stringify({name: document.getElementById('tlk-f-name').value, phone: document.getElementById('tlk-f-phone').value, city: document.getElementById('tlk-f-city').value, address: document.getElementById('tlk-f-address').value}));
