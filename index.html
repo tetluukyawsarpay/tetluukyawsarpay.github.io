@@ -95,6 +95,17 @@ layout: default
   .tlk-ann h4 a { color: var(--tlk-blue); text-decoration: none; }
   .tlk-ann .date { font-size: 11.5px; color: var(--tlk-muted); margin: 0 0 6px; }
   .tlk-ann .ex { font-size: 13px; color: var(--tlk-text); line-height: 1.6; margin: 0; }
+  .tlk-cart-btn { background: var(--tlk-accent); color: #141414; border: none; cursor: pointer; }
+  .book-card .tlk-add { margin-top: 8px; width: 100%; display: block; text-align: center; box-sizing: border-box; background: #238636; color: #fff; border: none; cursor: pointer; }
+  #tlk-cart-drawer { display: none; position: fixed; z-index: 10000; right: 0; top: 0; width: min(430px, 94vw); height: 100%; overflow-y: auto; background: var(--tlk-card); border-left: 1px solid var(--tlk-border); padding: 20px; box-sizing: border-box; color: var(--tlk-text); }
+  #tlk-cart-drawer h3 { margin-top: 0; }
+  .tlk-cart-item { border: 1px solid var(--tlk-border); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
+  .tlk-cart-item p { margin: 4px 0; font-size: 13.5px; line-height: 1.5; }
+  .tlk-qty { display: inline-flex; gap: 8px; align-items: center; }
+  .tlk-qty button { background: var(--tlk-pill-bg); color: var(--tlk-text); border: 1px solid var(--tlk-border); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-weight: bold; }
+  .tlk-field label { font-size: 13px; font-weight: bold; display: block; margin-top: 10px; }
+  .tlk-field input, .tlk-field textarea { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--tlk-border); background: var(--tlk-input-bg); color: var(--tlk-text); box-sizing: border-box; margin-top: 4px; font-size: 14px; }
+  .tlk-muted { color: var(--tlk-muted); font-size: 12.5px; line-height: 1.6; }
 </style>
 
 <div class="tlk-wrap">
@@ -108,6 +119,7 @@ layout: default
     <div class="tlk-social">
       <a class="tlk-btn fb" href="https://www.facebook.com/tetluukyaw/" target="_blank">Facebook</a>
       <a class="tlk-btn tg" href="https://t.me/tetluukyawsarpay" target="_blank">Telegram</a>
+      <button class="tlk-btn tlk-cart-btn" onclick="openCart()">🛒 ခြင်းကြည့်ရန် (<span id="tlk-cart-count">0</span>)</button>
     </div>
   </header>
 
@@ -154,6 +166,7 @@ layout: default
         <p class="tlk-price">💵 {{ pinned_book.price }}</p>
         <p class="tlk-summary">{{ pinned_book.summary }}</p>
         <button class="tlk-btn order" onclick="openModal('modal-{{ pinned_book.id }}')">အသေးစိတ်ကြည့်ရန် / မှာယူရန်</button>
+        {% unless pinned_book.price contains 'ကုန်သွားပါပြီ' %}<button class="tlk-btn tlk-add" style="margin-top:8px;" data-title="{{ pinned_book.title | escape }}" data-author="{{ pinned_book.author | escape }}" data-price="{{ pinned_book.price | escape }}" onclick="addToCart('{{ pinned_book.id }}', this)">🛒 ခြင်းထဲထည့်</button>{% endunless %}
       </div>
     </div>
   </section>
@@ -176,7 +189,7 @@ layout: default
               <div class="cover"><img src="{{ book.image }}" alt="{{ book.title }}" loading="lazy"></div>
               <h4>{{ book.title }}</h4>
               <p class="author">{{ book.author }}</p>
-              <p class="price">{{ book.price }}</p>
+              <p class="price">{{ book.price }}</p>{% unless book.price contains 'ကုန်သွားပါပြီ' %}<button class="tlk-btn tlk-add" data-title="{{ book.title | escape }}" data-author="{{ book.author | escape }}" data-price="{{ book.price | escape }}" onclick="event.stopPropagation(); addToCart('{{ book.id }}', this)">🛒 ခြင်းထဲထည့်</button>{% endunless %}
             </article>
             {% endif %}
           {% endfor %}
@@ -205,7 +218,7 @@ layout: default
         <div class="cover"><img src="{{ book.image }}" alt="{{ book.title }}" loading="lazy"></div>
         <h4>{{ book.title }}</h4>
         <p class="author">{{ book.author }}</p>
-        <p class="price">{{ book.price }}</p>
+        <p class="price">{{ book.price }}</p>{% unless book.price contains 'ကုန်သွားပါပြီ' %}<button class="tlk-btn tlk-add" data-title="{{ book.title | escape }}" data-author="{{ book.author | escape }}" data-price="{{ book.price | escape }}" onclick="event.stopPropagation(); addToCart('{{ book.id }}', this)">🛒 ခြင်းထဲထည့်</button>{% endunless %}
       </article>
       {% endfor %}
     </div>
@@ -220,7 +233,7 @@ layout: default
         <div class="cover"><img src="{{ book.image }}" alt="{{ book.title }}" loading="lazy"></div>
         <h4>{{ book.title }}</h4>
         <p class="author">{{ book.author }}</p>
-        <p class="price">{{ book.price }}</p>
+        <p class="price">{{ book.price }}</p>{% unless book.price contains 'ကုန်သွားပါပြီ' %}<button class="tlk-btn tlk-add" data-title="{{ book.title | escape }}" data-author="{{ book.author | escape }}" data-price="{{ book.price | escape }}" onclick="event.stopPropagation(); addToCart('{{ book.id }}', this)">🛒 ခြင်းထဲထည့်</button>{% endunless %}
       </article>
       {% endfor %}
     </div>
@@ -280,6 +293,38 @@ layout: default
   </div>
   {% endfor %}
 
+</div>
+
+<div id="tlk-cart-drawer">
+  <h3>🛒 ခြင်းထဲက စာအုပ်များ</h3>
+  <div id="tlk-cart-items"></div>
+  <p id="tlk-cart-subtotal" style="font-weight:bold; color:var(--tlk-accent);"></p>
+  <form id="tlk-order-form" onsubmit="return submitOrder(event)">
+    <div class="tlk-field"><label>အမည် *</label><input id="tlk-f-name" type="text" required></div>
+    <div class="tlk-field"><label>ဖုန်းနံပါတ် *</label><input id="tlk-f-phone" type="tel" required></div>
+    <div class="tlk-field"><label>မြို့ / မြို့နယ် *</label><input id="tlk-f-city" type="text" required></div>
+    <div class="tlk-field"><label>လိပ်စာအပြည့်အစုံ *</label><textarea id="tlk-f-address" rows="3" required></textarea></div>
+    <div class="tlk-field"><label>ပို့ဆောင်မှု</label><p style="margin:6px 0;">Royal Express ပဲ (အခြား ပို့ဆောင်မှုလိုပါက ဖုန်းဆက်ပါ)</p></div>
+    <div class="tlk-field"><label>ငွေပေးချေမှု အကြိုက်</label>
+      <p style="margin:6px 0;"><label style="display:inline; font-weight:normal;"><input type="radio" name="tlk-pay" value="COD" checked> COD</label>&nbsp;&nbsp;<label style="display:inline; font-weight:normal;"><input type="radio" name="tlk-pay" value="ကြိုလွှဲ"> ကြိုလွှဲ</label></p>
+    </div>
+    <div class="tlk-field"><label>မှတ်ချက်</label><textarea id="tlk-f-note" rows="2"></textarea></div>
+    <p class="tlk-muted">ပို့ခကို site မှာ အကြမ်းဖျင်းပဲ ပြသည်။ အတိအကျကို ဖုန်းဆက်ချိန်မှာ စာအုပ်တွေ ချိန်ပြီး ပြောပေးမည်။ နေ့လည် ၁၂ နာရီနောက်ပိုင်း အမှာစာများသည် နောက်နေ့မှ ပို့ဆောင်ရေးသို့ အပ်နိုင်သည်။ ဖုန်းဖြင့် အတည်ပြုပြီးမှသာ ပို့မည်။</p>
+    <button class="tlk-btn" style="width:100%; background:#0088cc; color:#fff; border:none; cursor:pointer; padding:12px;" type="submit">✈️ Telegram ဖြင့် အမှာစာ ပို့မည်</button>
+  </form>
+  <div id="tlk-order-done" style="display:none;">
+    <p style="font-weight:bold; color:var(--tlk-accent);">အမှာစာ ပြင်ဆင်ပြီးပါပြီ။ Telegram မှာ Send နှိပ်မှ အမှာစာ ရောက်မယ်။</p>
+    <p id="tlk-order-ref"></p>
+    <button class="tlk-btn" style="background:var(--tlk-pill-bg); color:var(--tlk-text); border:1px solid var(--tlk-border); cursor:pointer;" onclick="copyLastOrder()">📋 အမှာစာ စာသား ကူးယူရန်</button>
+    <div id="tlk-save-prompt" style="margin-top:14px; border:1px solid var(--tlk-border); border-radius:8px; padding:12px;">
+      <p style="margin:0 0 10px;">နောက်တစ်ခါ လွယ်အောင် အချက်အလက် သိမ်းထားမလား</p>
+      <button class="tlk-btn" style="background:#238636; color:#fff; border:none; cursor:pointer;" onclick="saveCustomerInfo()">ဟုတ်ကဲ့၊ သိမ်းထားပါ</button>
+      <button class="tlk-btn" style="background:var(--tlk-pill-bg); color:var(--tlk-text); border:1px solid var(--tlk-border); cursor:pointer;" onclick="skipSave()">မလိုပါဘူး</button>
+      <p id="tlk-save-note" class="tlk-muted"></p>
+    </div>
+    <button class="tlk-btn" style="margin-top:14px; background:var(--tlk-pill-bg); color:var(--tlk-text); border:1px solid var(--tlk-border); cursor:pointer;" onclick="clearCartAfterOrder()">ခြင်းကို ရှင်းမည်</button>
+  </div>
+  <button class="tlk-btn" style="margin-top:16px; width:100%; background:var(--tlk-pill-bg); color:var(--tlk-text); border:1px solid var(--tlk-border); cursor:pointer;" onclick="closeCart()">ပိတ်မည်</button>
 </div>
 
 <script>
@@ -346,6 +391,119 @@ layout: default
       navigator.clipboard.writeText(t).then(function () { done(true); }, fallbackCopy);
     } else { fallbackCopy(); }
   }
+  var tlkCart = [];
+  try { tlkCart = JSON.parse(localStorage.getItem('tlk-cart') || '[]'); } catch (e) { tlkCart = []; }
+  var tlkLastOrderMsg = '';
+  var tlkLastOrderRef = '';
+  function tlkDigitsToAscii(s) {
+    var map = {'၀':'0','၁':'1','၂':'2','၃':'3','၄':'4','၅':'5','၆':'6','၇':'7','၈':'8','၉':'9'};
+    return String(s).replace(/[၀-၉]/g, function (d) { return map[d]; });
+  }
+  function parsePrice(s) {
+    var a = tlkDigitsToAscii(s).replace(/,/g, '');
+    var m = a.match(/\d+/);
+    return m ? parseInt(m[0], 10) : 0;
+  }
+  function fmtMMK(n) {
+    var a = String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    var map = {'0':'၀','1':'၁','2':'၂','3':'၃','4':'၄','5':'၅','6':'၆','7':'၇','8':'၈','9':'၉'};
+    return a.replace(/[0-9]/g, function (d) { return map[d]; }) + ' ကျပ်';
+  }
+  function saveCart() { try { localStorage.setItem('tlk-cart', JSON.stringify(tlkCart)); } catch (e) {} updateCartCount(); }
+  function updateCartCount() {
+    var c = 0; tlkCart.forEach(function (it) { c += it.qty; });
+    var el = document.getElementById('tlk-cart-count'); if (el) el.textContent = c;
+  }
+  function addToCart(id, btn) {
+    var title = btn.getAttribute('data-title') || '';
+    var author = btn.getAttribute('data-author') || '';
+    var price = btn.getAttribute('data-price') || '';
+    var found = null; tlkCart.forEach(function (it) { if (it.id === id) found = it; });
+    if (found) { found.qty += 1; } else { tlkCart.push({id: id, title: title, author: author, price: price, unit: parsePrice(price), qty: 1}); }
+    saveCart();
+    var old = btn.textContent; btn.textContent = '✓ ထည့်ပြီးပြီ';
+    setTimeout(function () { btn.textContent = old; }, 1200);
+  }
+  function changeQty(id, delta) {
+    tlkCart.forEach(function (it) { if (it.id === id) it.qty += delta; });
+    tlkCart = tlkCart.filter(function (it) { return it.qty > 0; });
+    saveCart(); renderCart();
+  }
+  function removeItem(id) { tlkCart = tlkCart.filter(function (it) { return it.id !== id; }); saveCart(); renderCart(); }
+  function cartSubtotal() { var t = 0; tlkCart.forEach(function (it) { t += it.unit * it.qty; }); return t; }
+  function renderCart() {
+    var box = document.getElementById('tlk-cart-items'); if (!box) return;
+    if (tlkCart.length === 0) { box.innerHTML = '<p class="tlk-muted">ခြင်းထဲမှာ စာအုပ်မရှိသေးပါ။</p>'; }
+    else {
+      var html = '';
+      tlkCart.forEach(function (it) {
+        html += '<div class="tlk-cart-item"><p><strong>' + it.title + '</strong></p><p class="tlk-muted">' + it.author + ' — ' + it.price + '</p><p><span class="tlk-qty"><button type="button" onclick="changeQty(\'' + it.id + '\', -1)">−</button><span>' + it.qty + '</span><button type="button" onclick="changeQty(\'' + it.id + '\', 1)">+</button></span>&nbsp; <button type="button" style="background:none; border:none; color:var(--tlk-muted); cursor:pointer;" onclick="removeItem(\'' + it.id + '\')">ဖျက်မည်</button></p></div>';
+      });
+      box.innerHTML = html;
+    }
+    var sub = document.getElementById('tlk-cart-subtotal'); if (sub) sub.textContent = 'စာအုပ်ဖိုး စုစုပေါင်း: ' + fmtMMK(cartSubtotal()) + ' (ပို့ခ မပါ)';
+    updateCartCount();
+  }
+  function prefillCustomer() {
+    try {
+      var c = JSON.parse(localStorage.getItem('tlk-customer') || 'null'); if (!c) return;
+      var map = {'tlk-f-name': c.name, 'tlk-f-phone': c.phone, 'tlk-f-city': c.city, 'tlk-f-address': c.address};
+      Object.keys(map).forEach(function (k) { var el = document.getElementById(k); if (el && !el.value) el.value = map[k] || ''; });
+    } catch (e) {}
+  }
+  function openCart() { renderCart(); prefillCustomer(); document.getElementById('tlk-order-form').style.display = ''; document.getElementById('tlk-order-done').style.display = 'none'; document.getElementById('tlk-cart-drawer').style.display = 'block'; document.body.style.overflow = 'hidden'; }
+  function closeCart() { document.getElementById('tlk-cart-drawer').style.display = 'none'; document.body.style.overflow = 'auto'; }
+  function orderRef() {
+    var d = new Date();
+    function p(n) { return (n < 10 ? '0' : '') + n; }
+    return 'TLK-' + d.getFullYear() + p(d.getMonth() + 1) + p(d.getDate()) + '-' + p(d.getHours()) + p(d.getMinutes()) + p(d.getSeconds());
+  }
+  function submitOrder(e) {
+    e.preventDefault();
+    if (tlkCart.length === 0) { alert('ခြင်းထဲမှာ စာအုပ်မရှိသေးပါ။'); return false; }
+    var name = document.getElementById('tlk-f-name').value.trim();
+    var phone = document.getElementById('tlk-f-phone').value.trim();
+    var city = document.getElementById('tlk-f-city').value.trim();
+    var addr = document.getElementById('tlk-f-address').value.trim();
+    var note = document.getElementById('tlk-f-note').value.trim();
+    var payEl = document.querySelector('input[name="tlk-pay"]:checked');
+    var pay = payEl ? payEl.value : 'COD';
+    if (!name || !phone || !city || !addr) { alert('အမည်၊ ဖုန်း၊ မြို့/မြို့နယ်၊ လိပ်စာ ဖြည့်ပါ။'); return false; }
+    tlkLastOrderRef = orderRef();
+    var lines = [];
+    lines.push('အမှာစာ: ' + tlkLastOrderRef);
+    lines.push('အမည်: ' + name);
+    lines.push('ဖုန်း: ' + phone);
+    lines.push('မြို့/မြို့နယ်: ' + city);
+    lines.push('လိပ်စာ: ' + addr);
+    lines.push('ပို့ဆောင်မှု: Royal Express');
+    lines.push('ငွေပေးချေမှု: ' + pay);
+    lines.push('စာအုပ်များ:');
+    tlkCart.forEach(function (it) { lines.push('- ' + it.title + ' x ' + it.qty + ' — ' + it.price); });
+    lines.push('စာအုပ်ဖိုး စုစုပေါင်း: ' + fmtMMK(cartSubtotal()));
+    if (note) lines.push('မှတ်ချက်: ' + note);
+    tlkLastOrderMsg = lines.join('\n');
+    try {
+      var ta = document.createElement('textarea'); ta.value = tlkLastOrderMsg; ta.style.position = 'fixed'; ta.style.opacity = '0';
+      document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    } catch (err) {}
+    window.open('https://t.me/tetluukyawsarpay?text=' + encodeURIComponent(tlkLastOrderMsg), '_blank');
+    document.getElementById('tlk-order-form').style.display = 'none';
+    document.getElementById('tlk-order-done').style.display = 'block';
+    document.getElementById('tlk-order-ref').textContent = 'အမှာစာ အမှတ်: ' + tlkLastOrderRef;
+    document.getElementById('tlk-save-note').textContent = '';
+    return false;
+  }
+  function copyLastOrder() { if (tlkLastOrderMsg) copyText(tlkLastOrderMsg); }
+  function saveCustomerInfo() {
+    try {
+      localStorage.setItem('tlk-customer', JSON.stringify({name: document.getElementById('tlk-f-name').value, phone: document.getElementById('tlk-f-phone').value, city: document.getElementById('tlk-f-city').value, address: document.getElementById('tlk-f-address').value}));
+      document.getElementById('tlk-save-note').textContent = 'သိမ်းပြီးပါပြီ — နောက်တစ်ခါ ဖောင်မှာ အလိုအလျောက် ဖြည့်ပေးမယ်။';
+    } catch (e) {}
+  }
+  function skipSave() { document.getElementById('tlk-save-prompt').style.display = 'none'; }
+  function clearCartAfterOrder() { tlkCart = []; saveCart(); renderCart(); document.getElementById('tlk-order-form').style.display = ''; document.getElementById('tlk-order-done').style.display = 'none'; document.getElementById('tlk-order-form').reset(); prefillCustomer(); }
+  updateCartCount();
   function openModal(id) {
     document.getElementById(id).style.display = 'block';
     document.body.style.overflow = 'hidden';
