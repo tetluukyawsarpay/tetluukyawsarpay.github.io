@@ -1,6 +1,5 @@
 ---
 layout: default
-description: "တက်လူကျော်စာပေ — ရန်ကုန် လှည်းတန်းက သမိုင်း၊ နိုင်ငံရေး၊ မြန်မာစာပေ စာအုပ်ဆိုင်။ Cart နဲ့ မှာပြီး Royal Express ဖြင့် တစ်နိုင်ငံလုံး ပို့ပေးပါသည်။"
 ---
 
 <style>
@@ -44,11 +43,6 @@ description: "တက်လူကျော်စာပေ — ရန်ကုန�
   /* ---------- promo banner ---------- */
   .tlk-promo { background: var(--tlk-promo-bg); border: 1px solid var(--tlk-promo-border); border-left: 4px solid var(--tlk-accent); padding: 13px 16px; border-radius: 10px; margin-bottom: 26px; color: var(--tlk-text); font-size: 14px; }
   .tlk-promo strong { color: var(--tlk-accent); }
-  /* ---------- how to order ---------- */
-  .tlk-howto { background: var(--tlk-card); border: 1px solid var(--tlk-border); border-radius: 12px; padding: 18px 20px; margin-bottom: 28px; }
-  .tlk-howto h3 { margin: 0 0 10px; font-size: 18px; color: var(--tlk-text); }
-  .tlk-howto ol { margin: 0 0 10px; padding-left: 22px; color: var(--tlk-text); font-size: 14px; line-height: 1.9; }
-  .tlk-howto ol a { color: var(--tlk-blue); }
   /* ---------- pinned / featured book ---------- */
   .tlk-featured { background: linear-gradient(135deg, #2d1f04, #1a1206); border: 1px solid var(--tlk-accent); border-radius: 12px; padding: 20px; margin-bottom: 28px; }
   .tlk-featured-badge { display: inline-block; background: var(--tlk-accent); color: #141414; font-weight: 800; font-size: 13px; padding: 5px 14px; border-radius: 20px; margin-bottom: 14px; }
@@ -101,93 +95,9 @@ description: "တက်လူကျော်စာပေ — ရန်ကုန�
   .tlk-ann h4 a { color: var(--tlk-blue); text-decoration: none; }
   .tlk-ann .date { font-size: 11.5px; color: var(--tlk-muted); margin: 0 0 6px; }
   .tlk-ann .ex { font-size: 13px; color: var(--tlk-text); line-height: 1.6; margin: 0; }
-  .tlk-cart-btn { background: var(--tlk-accent); color: #141414; border: none; cursor: pointer; }
-  .book-card .tlk-add { margin-top: 8px; width: 100%; display: block; text-align: center; box-sizing: border-box; background: #238636; color: #fff; border: none; cursor: pointer; }
-  #tlk-cart-drawer { display: none; position: fixed; z-index: 10000; right: 0; top: 0; width: min(430px, 94vw); height: 100%; overflow-y: auto; background: var(--tlk-card); border-left: 1px solid var(--tlk-border); padding: 20px; box-sizing: border-box; color: var(--tlk-text); }
-  #tlk-cart-drawer h3 { margin-top: 0; }
-  .tlk-cart-item { border: 1px solid var(--tlk-border); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
-  .tlk-cart-item p { margin: 4px 0; font-size: 13.5px; line-height: 1.5; }
-  .tlk-qty { display: inline-flex; gap: 8px; align-items: center; }
-  .tlk-qty button { background: var(--tlk-pill-bg); color: var(--tlk-text); border: 1px solid var(--tlk-border); border-radius: 6px; padding: 4px 10px; cursor: pointer; font-weight: bold; }
-  .tlk-field label { font-size: 13px; font-weight: bold; display: block; margin-top: 10px; }
-  .tlk-field input, .tlk-field textarea { width: 100%; padding: 10px; border-radius: 6px; border: 1px solid var(--tlk-border); background: var(--tlk-input-bg); color: var(--tlk-text); box-sizing: border-box; margin-top: 4px; font-size: 14px; }
-  .tlk-muted { color: var(--tlk-muted); font-size: 12.5px; line-height: 1.6; }
 </style>
 
 <div class="tlk-wrap">
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@graph": [
-    {
-      "@type": "BookStore",
-      "name": "တက်လူကျော်စာပေ",
-      "alternateName": "Tet Luu Kyaw Bookstore",
-      "url": "https://tetluukyawsarpay.github.io/",
-      "image": "https://tetluukyawsarpay.github.io/images/logo.jpg",
-      "description": "တက်လူကျော်စာပေ — ရန်ကုန် လှည်းတန်းက သမိုင်း၊ နိုင်ငံရေး၊ မြန်မာစာပေ စာအုပ်ဆိုင်။ Cart နဲ့ မှာပြီး Royal Express ဖြင့် တစ်နိုင်ငံလုံး ပို့ပေးပါသည်။",
-      "telephone": "+959259289159",
-      "address": {
-        "@type": "PostalAddress",
-        "streetAddress": "အမှတ် ၁၆အေ (မြေညီထပ်), လှည်းတန်း (၂) လမ်း, (၃) ရပ်ကွက်",
-        "addressLocality": "ကမာရွတ်",
-        "addressRegion": "ရန်ကုန်",
-        "addressCountry": "MM"
-      },
-      "sameAs": [
-        "https://www.facebook.com/tetluukyaw/",
-        "https://t.me/tetluukyawsarpay"
-      ]
-    },
-    {
-      "@type": "WebSite",
-      "name": "တက်လူကျော်စာပေ",
-      "url": "https://tetluukyawsarpay.github.io/",
-      "inLanguage": "my"
-    },
-    {
-      "@type": "FAQPage",
-      "mainEntity": [
-        {
-          "@type": "Question",
-          "name": "တက်လူကျော်စာပေမှာ စာအုပ် ဘယ်လို မှာယူရမလဲ?",
-          "acceptedAnswer": {"@type": "Answer", "text": "Website မှာ စာအုပ်ကို ရွေးပြီး ခြင်းထဲထည့်ပါ၊ ခြင်းကြည့်ရန် စာမျက်နှာမှာ အမည်၊ ဖုန်း၊ မြို့/မြို့နယ်၊ လိပ်စာ ဖြည့်ပြီး အမှာစာ တင်ပါ။ Facebook၊ Telegram၊ Viber သို့မဟုတ် ဖုန်း 09 259 289 159 နဲ့လည်း မှာယူနိုင်ပါသည်။"}
-        },
-        {
-          "@type": "Question",
-          "name": "အမှာစာ တင်ပြီးရင် ချက်ချင်း အတည်ဖြစ်ပြီလား?",
-          "acceptedAnswer": {"@type": "Answer", "text": "မဟုတ်ပါ။ အမှာစာ တင်ပြီးချိန်တွင် လက်ခံရရှိပြီ အဆင့်သာ ရှိပါသေးသည်။ ဆိုင်က စတော့စစ်ပြီး ဖုန်းဆက်ကာ ပို့ခ အပါအဝင် စုစုပေါင်းကို အတည်ပြုပါမည်။ ဝယ်သူက ပို့လိုက်ပါ သို့မဟုတ် လက်ခံပါတယ် ပြောပြီးမှသာ ပို့ဆောင်ပါမည်။"}
-        },
-        {
-          "@type": "Question",
-          "name": "ပို့ဆောင်မှုကို ဘာနဲ့ ပို့ပေးသလဲ?",
-          "acceptedAnswer": {"@type": "Answer", "text": "Website မှတဆင့် မှာယူပါက Royal Express ဖြင့်သာ ပို့ဆောင်ပါသည်။ ကျန်သော ပို့ဆောင်နည်းလမ်းများအတွက် ဖုန်းဆက်ပြီး ပြောဆိုနိုင်ပါသည်။"}
-        },
-        {
-          "@type": "Question",
-          "name": "ပို့ခ ဘယ်လောက်ကျသလဲ?",
-          "acceptedAnswer": {"@type": "Answer", "text": "အကြမ်းဖျင်း ပို့ခမှာ ရန်ကုန် ၄,၀၀၀ ကျပ်၊ နယ်မြို့ ၅,၀၀၀ မှ ၁၀,၀၀၀ ကျပ် (၂ KG အထိ) ဖြစ်ပြီး အတိအကျ ပို့ခကို စာအုပ် အလေးချိန်ချိန်ပြီးမှ ဖုန်းနဲ့ ပြောပါမည်။"}
-        },
-        {
-          "@type": "Question",
-          "name": "ငွေ ဘယ်လို ပေးရသလဲ?",
-          "acceptedAnswer": {"@type": "Answer", "text": "COD (ပစ္စည်းရောက်မှ ငွေပေးချေခြင်း) သို့မဟုတ် ကြိုလွှဲ နှစ်မျိုးလုံးဖြင့် ပေးချေနိုင်ပါသည်။"}
-        },
-        {
-          "@type": "Question",
-          "name": "ဘယ်အချိန်အထိ မှာရင် ဘယ်တော့ ပို့ပေးသလဲ?",
-          "acceptedAnswer": {"@type": "Answer", "text": "နေ့လယ် ၁၂:၀၀ နောက်ပိုင်း အမှာစာများကို နောက်တစ်နေ့မှ delivery ကို အပ်ပါမည်။ ခန့်မှန်း ပို့ဆောင်ချိန်မှာ ရန်ကုန် ၁ မှ ၂ ရက်၊ နယ် ၃ မှ ၇ ရက် ဖြစ်ပါသည်။"}
-        },
-        {
-          "@type": "Question",
-          "name": "တက်လူကျော်စာပေ ဆိုင်က ဘယ်မှာလဲ၊ ဘယ်လို ဆက်သွယ်ရမလဲ?",
-          "acceptedAnswer": {"@type": "Answer", "text": "ဆိုင်လိပ်စာမှာ ရန်ကုန်၊ ကမာရွတ်၊ (၃) ရပ်ကွက်၊ လှည်းတန်း (၂) လမ်း၊ အမှတ် ၁၆အေ (မြေညီထပ်) ဖြစ်ပြီး ဖုန်းနံပါတ်များမှာ 09 259 289 159 နှင့် 09 250 41 64 64 ဖြစ်ပါသည်။"}
-        }
-      ]
-    }
-  ]
-}
-</script>
 <div class="tlk-inner">
   {% assign tlk_books = site.data.books | concat: site.data.books2 %}
 
@@ -198,7 +108,6 @@ description: "တက်လူကျော်စာပေ — ရန်ကုန�
     <div class="tlk-social">
       <a class="tlk-btn fb" href="https://www.facebook.com/tetluukyaw/" target="_blank">Facebook</a>
       <a class="tlk-btn tg" href="https://t.me/tetluukyawsarpay" target="_blank">Telegram</a>
-      <a class="tlk-btn tlk-cart-btn" href="cart/">🛒 ခြင်းကြည့်ရန် (<span id="tlk-cart-count">0</span>)</a>
     </div>
   </header>
 
@@ -227,19 +136,6 @@ description: "တက်လူကျော်စာပေ — ရန်ကုန�
   <!-- promo -->
   <div class="tlk-promo">📢 <strong>အထူးအသိပေးချက်</strong> — ယခုလကုန်အထိ စာအုပ် (၃) အုပ်နှင့်အထက် မှာယူပါက ပို့ဆောင်ခ အခမဲ့ဖြင့် ပို့ဆောင်ပေးနေပါပြီ။</div>
 
-  <!-- how to order -->
-  <section class="tlk-howto">
-    <h3>🛒 ဘယ်လို မှာယူမလဲ</h3>
-    <ol>
-      <li>စာအုပ်ကို ရွေးပြီး <strong>🛒 ခြင်းထဲထည့်</strong> ကို နှိပ်ပါ။</li>
-      <li><a href="cart/">🛒 ခြင်းကြည့်ရန်</a> ကို ဖွင့်ပြီး အမည်၊ ဖုန်း၊ မြို့/မြို့နယ်၊ လိပ်စာ ဖြည့်ပါ။</li>
-      <li><strong>အမှာစာ တင်မည်</strong> ကို နှိပ်ပါ — အမှာစာသည် ထိုအချိန်တွင် "လက်ခံရရှိပြီ" အဆင့်သာ ရှိပါသေးသည်။</li>
-      <li>ဆိုင်က စတော့စစ်ပြီး ဖုန်းဆက်ကာ ပို့ခ အပါအဝင် စုစုပေါင်းကို အတည်ပြုပါမည်။ ဝယ်သူက "ပို့လိုက်ပါ / လက်ခံပါတယ်" ပြောပြီးမှသာ ပို့ဆောင်ပါမည်။</li>
-    </ol>
-    <p class="tlk-muted">ပို့ဆောင်မှု — Royal Express (Website မှတဆင့်)။ ပို့ခ အကြမ်းဖျင်း — ရန်ကုန် ၄,၀၀၀ ကျပ်၊ နယ်မြို့ ၅,၀၀၀–၁၀,၀၀၀ ကျပ် (၂ KG အထိ)၊ အတိအကျကို အလေးချိန်ချိန်ပြီးမှ ဖုန်းနဲ့ ပြောပါမည်။ ငွေပေးချေမှု — COD သို့မဟုတ် ကြိုလွှဲ။ ၁၂:၀၀ နောက်ပိုင်း အမှာစာများ နောက်တစ်နေ့မှ delivery ကို အပ်ပါမည်။ ခန့်မှန်း ပို့ဆောင်ချိန် — ရန်ကုန် ၁–၂ ရက်၊ နယ် ၃–၇ ရက်။</p>
-    <p class="tlk-muted">နောက်ဆုံး အပ်ဒိတ်: {{ site.time | date: "%Y-%m-%d" }}</p>
-  </section>
-
   <!-- pinned / featured book -->
   {% assign pinned_book = nil %}
   {% for book in tlk_books %}
@@ -258,7 +154,6 @@ description: "တက်လူကျော်စာပေ — ရန်ကုန�
         <p class="tlk-price">💵 {{ pinned_book.price }}</p>
         <p class="tlk-summary">{{ pinned_book.summary }}</p>
         <button class="tlk-btn order" onclick="openModal('modal-{{ pinned_book.id }}')">အသေးစိတ်ကြည့်ရန် / မှာယူရန်</button>
-        {% unless pinned_book.price contains 'ကုန်သွားပါပြီ' %}<button class="tlk-btn tlk-add" style="margin-top:8px;" data-title="{{ pinned_book.title | escape }}" data-author="{{ pinned_book.author | escape }}" data-price="{{ pinned_book.price | escape }}" onclick="addToCart('{{ pinned_book.id }}', this)">🛒 ခြင်းထဲထည့်</button>{% endunless %}
       </div>
     </div>
   </section>
@@ -281,7 +176,7 @@ description: "တက်လူကျော်စာပေ — ရန်ကုန�
               <div class="cover"><img src="{{ book.image }}" alt="{{ book.title }}" loading="lazy"></div>
               <h4>{{ book.title }}</h4>
               <p class="author">{{ book.author }}</p>
-              <p class="price">{{ book.price }}</p>{% unless book.price contains 'ကုန်သွားပါပြီ' %}<button class="tlk-btn tlk-add" data-title="{{ book.title | escape }}" data-author="{{ book.author | escape }}" data-price="{{ book.price | escape }}" onclick="event.stopPropagation(); addToCart('{{ book.id }}', this)">🛒 ခြင်းထဲထည့်</button>{% endunless %}
+              <p class="price">{{ book.price }}</p>
             </article>
             {% endif %}
           {% endfor %}
@@ -310,7 +205,7 @@ description: "တက်လူကျော်စာပေ — ရန်ကုန�
         <div class="cover"><img src="{{ book.image }}" alt="{{ book.title }}" loading="lazy"></div>
         <h4>{{ book.title }}</h4>
         <p class="author">{{ book.author }}</p>
-        <p class="price">{{ book.price }}</p>{% unless book.price contains 'ကုန်သွားပါပြီ' %}<button class="tlk-btn tlk-add" data-title="{{ book.title | escape }}" data-author="{{ book.author | escape }}" data-price="{{ book.price | escape }}" onclick="event.stopPropagation(); addToCart('{{ book.id }}', this)">🛒 ခြင်းထဲထည့်</button>{% endunless %}
+        <p class="price">{{ book.price }}</p>
       </article>
       {% endfor %}
     </div>
@@ -325,7 +220,7 @@ description: "တက်လူကျော်စာပေ — ရန်ကုန�
         <div class="cover"><img src="{{ book.image }}" alt="{{ book.title }}" loading="lazy"></div>
         <h4>{{ book.title }}</h4>
         <p class="author">{{ book.author }}</p>
-        <p class="price">{{ book.price }}</p>{% unless book.price contains 'ကုန်သွားပါပြီ' %}<button class="tlk-btn tlk-add" data-title="{{ book.title | escape }}" data-author="{{ book.author | escape }}" data-price="{{ book.price | escape }}" onclick="event.stopPropagation(); addToCart('{{ book.id }}', this)">🛒 ခြင်းထဲထည့်</button>{% endunless %}
+        <p class="price">{{ book.price }}</p>
       </article>
       {% endfor %}
     </div>
@@ -451,40 +346,6 @@ description: "တက်လူကျော်စာပေ — ရန်ကုန�
       navigator.clipboard.writeText(t).then(function () { done(true); }, fallbackCopy);
     } else { fallbackCopy(); }
   }
-  var tlkCart = [];
-  try { tlkCart = JSON.parse(localStorage.getItem('tlk-cart') || '[]'); } catch (e) { tlkCart = []; }
-  var tlkLastOrderMsg = '';
-  var tlkLastOrderRef = '';
-  function tlkDigitsToAscii(s) {
-    var map = {'၀':'0','၁':'1','၂':'2','၃':'3','၄':'4','၅':'5','၆':'6','၇':'7','၈':'8','၉':'9'};
-    return String(s).replace(/[၀-၉]/g, function (d) { return map[d]; });
-  }
-  function parsePrice(s) {
-    var a = tlkDigitsToAscii(s).replace(/,/g, '');
-    var m = a.match(/\d+/);
-    return m ? parseInt(m[0], 10) : 0;
-  }
-  function fmtMMK(n) {
-    var a = String(n).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    var map = {'0':'၀','1':'၁','2':'၂','3':'၃','4':'၄','5':'၅','6':'၆','7':'၇','8':'၈','9':'၉'};
-    return a.replace(/[0-9]/g, function (d) { return map[d]; }) + ' ကျပ်';
-  }
-  function saveCart() { try { localStorage.setItem('tlk-cart', JSON.stringify(tlkCart)); } catch (e) {} updateCartCount(); }
-  function updateCartCount() {
-    var c = 0; tlkCart.forEach(function (it) { c += it.qty; });
-    var el = document.getElementById('tlk-cart-count'); if (el) el.textContent = c;
-  }
-  function addToCart(id, btn) {
-    var title = btn.getAttribute('data-title') || '';
-    var author = btn.getAttribute('data-author') || '';
-    var price = btn.getAttribute('data-price') || '';
-    var found = null; tlkCart.forEach(function (it) { if (it.id === id) found = it; });
-    if (found) { found.qty += 1; } else { tlkCart.push({id: id, title: title, author: author, price: price, unit: parsePrice(price), qty: 1}); }
-    saveCart();
-    var old = btn.textContent; btn.textContent = '✓ ထည့်ပြီးပြီ';
-    setTimeout(function () { btn.textContent = old; }, 1200);
-  }
-  updateCartCount();
   function openModal(id) {
     document.getElementById(id).style.display = 'block';
     document.body.style.overflow = 'hidden';
